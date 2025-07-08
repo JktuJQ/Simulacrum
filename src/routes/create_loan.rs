@@ -1,13 +1,22 @@
+//! Templates, forms and views for create loan page.
+///!
+
 use axum::response::Html;
 use askama::Template;
 use crate::models::Page;
 
+/// [`CreateLoanTemplate`] is a template for page that allows creating loans.
+///
 #[derive(Template)]
 #[template(path = "create_loan.html")]
 pub struct CreateLoanTemplate {
+    /// Current active page (should be always `Page::CreateLoan`).
+    ///
     active_page: Page,
 }
 impl CreateLoanTemplate {
+    /// Initializes template with necessary data.
+    ///
     pub fn new() -> CreateLoanTemplate {
         CreateLoanTemplate {
             active_page: Page::CreateLoan
@@ -20,6 +29,8 @@ impl Default for CreateLoanTemplate {
     }
 }
 
+/// View of route that allows creating loans for website.
+///
 pub async fn create_loan_route() -> Html<String> {
     let template = CreateLoanTemplate::new();
     Html(template.render().expect("This template is empty and so rendering cannot fail."))
