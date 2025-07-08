@@ -108,30 +108,30 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <span class="badge bg-primary">#{{ loan.id }}</span>
-                            <span class="badge {% if loan.status == "Ожидает финансирования" %}bg-warning{% else %}bg-success{% endif %}">
+                            <span class="badge {% if loan.status == LoanStatus::InProgress %}bg-warning{% else %}bg-success{% endif %}">
                                 {{ loan.status }}
                             </span>
                         </div>
                         
-                        <h3 class="h5">Заем: {{ loan.amount }} USDC</h3>
-                        <p class="text-muted mb-2">Ставка: <strong>{{ loan.rate }}%</strong> годовых</p>
-                        <p class="text-muted mb-2">Срок: <strong>{{ loan.term }} дней</strong></p>
-                        <p class="text-muted mb-2">Залог: <strong>{{ loan.collateral }} ETH</strong></p>
+                        <h3 class="h5">Заем: {{ loan.amount }}</h3>
+                        <p class="text-muted mb-2">Ставка: <strong>{{ loan.rate }}</strong> годовых</p>
+                        <p class="text-muted mb-2">Срок: <strong>{{ loan.term.num_days() }} дней</strong></p>
+                        <p class="text-muted mb-2">Залог: <strong>{{ loan.collateral }}</strong></p>
                         
                         <div class="mt-3">
                             <div class="d-flex justify-content-between">
-                                <span>LTV: <strong>{{ loan.ltv }}%</strong></span>
+                                <span>LTV: <strong>{{ loan.ltv }}</strong></span>
                                 <span>
-                                    {% if loan.ltv <= 50.0 %}
+                                    {% if loan.ltv <= Percent(50.0) %}
                                         <i class="bi bi-check-circle-fill text-success"></i> Безопасно
-                                    {% elif loan.ltv <= 70.0 %}
+                                    {% elif loan.ltv <= Percent(70.0) %}
                                         <i class="bi bi-exclamation-triangle-fill text-warning"></i> Умеренно
                                     {% else %}
                                         <i class="bi bi-exclamation-triangle-fill text-danger"></i> Рискованно
                                     {% endif %}
                                 </span>
                             </div>
-                            <div class="ltv-indicator {% if loan.ltv <= 50.0 %}ltv-safe{% elif loan.ltv <= 70.0 %}ltv-warning{% else %}ltv-danger{% endif %}"></div>
+                            <div class="ltv-indicator {% if loan.ltv <= Percent(50.0) %}ltv-safe{% elif loan.ltv <= Percent(70.0) %}ltv-warning{% else %}ltv-danger{% endif %}"></div>
                         </div>
                         
                         <div class="mt-3">
@@ -146,7 +146,6 @@
                 </div>
             </div>
 
-            <!-- Modal for this loan -->
             <div class="modal fade" id="fundModal{{ loan.id }}" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -155,8 +154,8 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <p>Вы собираетесь профинансировать займ на сумму <strong>{{ loan.amount }} USDC</strong> под <strong>{{ loan.rate }}%</strong> годовых.</p>
-                            <p>Залог заемщика: <strong>{{ loan.collateral }} ETH</strong> (LTV: {{ loan.ltv }}%).</p>
+                            <p>Вы собираетесь профинансировать займ на сумму <strong>{{ loan.amount }}</strong> под <strong>{{ loan.rate }}</strong> годовых.</p>
+                            <p>Залог заемщика: <strong>{{ loan.collateral }}</strong> (LTV: {{ loan.ltv }}).</p>
                             <div class="alert alert-info mt-3">
                                 <i class="bi bi-info-circle me-2"></i>Средства будут заблокированы в смарт-контракте до погашения займа.
                             </div>
@@ -183,7 +182,6 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Здесь можно добавить логику фильтрации и сортировки
         console.log('Marketplace page loaded');
     });
 </script>

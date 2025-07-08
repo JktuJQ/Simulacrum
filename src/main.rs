@@ -1,9 +1,18 @@
+//! Simulacrum
+//!
+//! `Simulacrum` is a decentralized peer lending platform
+//! that will simplify the process of issuing and receiving loans
+//! between users without intermediaries.
+//!
+
 use axum::{routing::get, Router};
 use tower_http::services::ServeDir;
 
 mod models;
 mod routes;
 
+/// Entry point for program.
+///
 #[shuttle_runtime::main]
 async fn main() -> shuttle_axum::ShuttleAxum {
     let router = Router::new()

@@ -95,7 +95,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <h3 class="h5 mb-0">Займ #{{ loan.id }}</h3>
-                                <span class="badge {% if loan.status == "Активен" %}bg-success{% else %}bg-danger{% endif %} status-badge">
+                                <span class="badge {% if loan.status == LoanStatus::Active %}bg-success{% else %}bg-danger{% endif %} status-badge">
                                     {{ loan.status }}
                                 </span>
                             </div>
@@ -103,32 +103,32 @@
                             <div class="row mt-3">
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">Сумма займа</p>
-                                    <p class="h5">{{ loan.amount }} USDC</p>
+                                    <p class="h5">{{ loan.amount }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">Ставка</p>
-                                    <p class="h5">{{ loan.rate }}%</p>
+                                    <p class="h5">{{ loan.rate }}</p>
                                 </div>
                             </div>
                             
                             <div class="row mt-3">
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">Залог</p>
-                                    <p class="h5">{{ loan.collateral }} ETH</p>
+                                    <p class="h5">{{ loan.collateral }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">Осталось дней</p>
-                                    <p class="h5">{{ loan.days_remaining }}</p>
+                                    <p class="h5">{{ loan.remaining.num_days() }}</p>
                                 </div>
                             </div>
                             
                             <div class="mt-3">
                                 <div class="d-flex justify-content-between ltv-label">
-                                    <span>LTV: <strong>{{ loan.ltv }}%</strong></span>
+                                    <span>LTV: <strong>{{ loan.ltv }}</strong></span>
                                     <span>
-                                        {% if loan.ltv <= 50.0 %}
+                                        {% if loan.ltv <= Percent(50.0) %}
                                             <i class="bi bi-check-circle-fill text-success"></i> Безопасно
-                                        {% elif loan.ltv <= 70.0 %}
+                                        {% elif loan.ltv <= Percent(70.0) %}
                                             <i class="bi bi-exclamation-triangle-fill text-warning"></i> Внимание
                                         {% else %}
                                             <i class="bi bi-exclamation-triangle-fill text-danger"></i> Риск ликвидации!
@@ -137,12 +137,12 @@
                                 </div>
                                 <div class="progress ltv-progress">
                                     <div class="progress-bar 
-                                        {% if loan.ltv <= 50.0 %}bg-success
-                                        {% elif loan.ltv <= 70.0 %}bg-warning
+                                        {% if loan.ltv <= Percent(50.0) %}bg-success
+                                        {% elif loan.ltv <= Percent(70.0) %}bg-warning
                                         {% else %}bg-danger
                                         {% endif %}" 
                                         role="progressbar" 
-                                        style="width: {{ loan.ltv }}%"
+                                        style="width: {{ loan.ltv }}"
                                         aria-valuenow="{{ loan.ltv }}" 
                                         aria-valuemin="0" 
                                         aria-valuemax="100">
@@ -168,9 +168,9 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Вы собираетесь погасить займ на сумму <strong>{{ loan.amount }} USDC</strong>.</p>
-                                <p>К возврату с процентами: <strong>{{ loan.total_to_repay }} USDC</strong>.</p>
-                                <p>После погашения ваш залог в размере <strong>{{ loan.collateral }} ETH</strong> будет возвращен.</p>
+                                <p>Вы собираетесь погасить займ на сумму <strong>{{ loan.amount }}</strong>.</p>
+                                <p>К возврату с процентами: <strong>{{ loan.total_to_repay }}</strong>.</p>
+                                <p>После погашения ваш залог в размере <strong>{{ loan.collateral }}</strong> будет возвращен.</p>
                                 <div class="alert alert-info mt-3">
                                     <i class="bi bi-info-circle me-2"></i>Транзакция может занять несколько минут для подтверждения в блокчейне.
                                 </div>
@@ -203,7 +203,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <h3 class="h5 mb-0">Инвестиция #{{ investment.id }}</h3>
-                                <span class="badge {% if investment.status == "Ожидает погашения" %}bg-warning{% else %}bg-success{% endif %} status-badge">
+                                <span class="badge {% if investment.status == InvestmentStatus::InProgress %}bg-warning{% else %}bg-success{% endif %} status-badge">
                                     {{ investment.status }}
                                 </span>
                             </div>
@@ -211,22 +211,22 @@
                             <div class="row mt-3">
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">Сумма инвестиции</p>
-                                    <p class="h5">{{ investment.amount }} USDC</p>
+                                    <p class="h5">{{ investment.amount }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">Ставка</p>
-                                    <p class="h5">{{ investment.rate }}%</p>
+                                    <p class="h5">{{ investment.rate }}</p>
                                 </div>
                             </div>
                             
                             <div class="row mt-3">
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">Заработано</p>
-                                    <p class="h5 text-success">{{ investment.earned }} USDC</p>
+                                    <p class="h5 text-success">{{ investment.earned }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">Осталось дней</p>
-                                    <p class="h5">{{ investment.days_remaining }}</p>
+                                    <p class="h5">{{ investment.remaining.num_days() }}</p>
                                 </div>
                             </div>
                             
@@ -237,14 +237,14 @@
                                 </div>
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">LTV</p>
-                                    <p class="h5">{{ investment.ltv }}%</p>
+                                    <p class="h5">{{ investment.ltv }}</p>
                                 </div>
                             </div>
                             
                             <div class="mt-3">
                                 <div class="d-flex justify-content-between ltv-label">
                                     <span>Доходность</span>
-                                    <span class="fw-bold">{{ investment.roi }}% годовых</span>
+                                    <span class="fw-bold">{{ investment.roi }} годовых</span>
                                 </div>
                                 <div class="progress ltv-progress">
                                     <div class="progress-bar bg-info" 
