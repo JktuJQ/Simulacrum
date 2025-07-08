@@ -33,5 +33,5 @@ impl Default for CreateLoanTemplate {
 ///
 pub async fn create_loan_route() -> Html<String> {
     let template = CreateLoanTemplate::new();
-    Html(template.render().expect("This template is empty and so rendering cannot fail."))
+    Html(template.render().expect("This template uses sample data and so rendering cannot fail."))
 }

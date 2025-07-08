@@ -33,5 +33,5 @@ impl Default for IndexTemplate {
 ///
 pub async fn index_route() -> Html<String> {
     let template = IndexTemplate::new();
-    Html(template.render().expect("This template is empty and so rendering cannot fail."))
+    Html(template.render().expect("This template uses sample data and so rendering cannot fail."))
 }
