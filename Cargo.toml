@@ -13,6 +13,8 @@ edition = "2021"
 tokio = "1.28.2"
 
 axum = { version = "0.8.1", features = ["macros"] }
+tower-http = { version = "0.6.2", features = ["fs"] }
+askama = { version = "0.13.0" }
 
 # shuttle-rs
 shuttle-runtime = "0.53.0"

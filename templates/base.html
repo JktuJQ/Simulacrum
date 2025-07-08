@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Simulacrum{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-currency-bitcoin me-2"></i>Simulacrum
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if active_page == ActivePage::Home %}active{% endif %}" href="/">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if active_page == ActivePage::Marketplace %}active{% endif %}" href="/marketplace">Маркетплейс</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if active_page == ActivePage::CreateLoan %}active{% endif %}" href="/create-loan">Создать заявку</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if active_page == ActivePage::Dashboard %}active{% endif %}" href="/dashboard">Моя панель</a>
+                </li>
+            </ul>
+
+            <div class="d-flex">
+                <button id="walletButton" class="btn btn-primary">
+                    <i class="bi bi-wallet2 me-2"></i>
+                    <span id="walletText">Подключить кошелек</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+
+<footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>О проекте</h5>
+                <p>Децентрализованная платформа для P2P кредитования под залог криптовалюты. Прозрачно, безопасно, без
+                    посредников.</p>
+            </div>
+            <div class="col-md-3">
+                <h5>Документация</h5>
+                <ul class="list-unstyled">
+                    <li><a href="https://github.com/your-repo" class="text-white">GitHub</a></li>
+                    <li><a href="#" class="text-white">Техническая документация</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Социальные сети</h5>
+                <div class="social-links">
+                    <a href="#" class="text-white me-2"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-white me-2"><i class="bi bi-telegram"></i></a>
+                    <a href="#" class="text-white"><i class="bi bi-discord"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr class="my-4 bg-secondary">
+        <div class="text-center">
+            <p class="mb-0">© 2023 Simulacrum. Все права защищены.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

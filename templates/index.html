@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Simulacrum - P2P Кредитование{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container py-5">
+        <div class="row align-items-center py-5">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Получите заем под залог криптовалюты</h1>
+                <p class="lead mb-4">Быстро, прозрачно и на ваших условиях. Или станьте кредитором и зарабатывайте на своих активах больше, чем в банке.</p>
+                <div class="d-flex gap-3">
+                    <a href="/marketplace" class="btn btn-primary btn-lg px-4">Посмотреть займы</a>
+                    <a href="/create-loan" class="btn btn-outline-dark btn-lg px-4">Создать заявку</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://via.placeholder.com/600x400" alt="Криптозалог" class="img-fluid rounded-3 shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <h2 class="text-center fw-bold mb-5">Как это работает</h2>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="h4 text-center mb-4">Для заемщиков</h3>
+                        <div class="d-flex mb-3">
+                            <div class="me-4">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">1</div>
+                            </div>
+                            <div>
+                                <h4 class="h5">Создаете заявку</h4>
+                                <p class="text-muted mb-0">Укажите сумму, срок и процентную ставку</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="me-4">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">2</div>
+                            </div>
+                            <div>
+                                <h4 class="h5">Вносите залог</h4>
+                                <p class="text-muted mb-0">Блокируете криптовалюту в смарт-контракте</p>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="me-4">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">3</div>
+                            </div>
+                            <div>
+                                <h4 class="h5">Получаете средства</h4>
+                                <p class="text-muted mb-0">Деньги поступают мгновенно на ваш кошелек</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="h4 text-center mb-4">Для кредиторов</h3>
+                        <div class="d-flex mb-3">
+                            <div class="me-4">
+                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">1</div>
+                            </div>
+                            <div>
+                                <h4 class="h5">Выбираете заявку</h4>
+                                <p class="text-muted mb-0">Фильтруйте по параметрам и рейтингам</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="me-4">
+                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">2</div>
+                            </div>
+                            <div>
+                                <h4 class="h5">Финансируете</h4>
+                                <p class="text-muted mb-0">Переводите средства заемщику</p>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="me-4">
+                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">3</div>
+                            </div>
+                            <div>
+                                <h4 class="h5">Получаете прибыль</h4>
+                                <p class="text-muted mb-0">Проценты автоматически начисляются на ваш кошелек</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container py-5">
+        <h2 class="text-center fw-bold mb-5">Платформа в цифрах</h2>
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="display-5 fw-bold text-primary">$<span id="tvlValue">1.2M</span></div>
+                <p class="text-muted">Общая сумма залогов</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="display-5 fw-bold text-primary"><span id="loansCount">245</span></div>
+                <p class="text-muted">Активных займов</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="display-5 fw-bold text-primary"><span id="avgRate">14.5</span>%</div>
+                <p class="text-muted">Средняя ставка</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="display-5 fw-bold text-primary"><span id="usersCount">1.8K</span></div>
+                <p class="text-muted">Пользователей</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setInterval(() => {
+            const tvl = parseFloat(document.getElementById('tvlValue').textContent.replace('$', ''));
+            document.getElementById('tvlValue').textContent = (tvl + 0.1).toFixed(1) + 'M';
+        }, 3000);
+    });
+</script>
+{% endblock %}
