@@ -8,6 +8,7 @@
 use axum::{routing::get, Router};
 use tower_http::services::ServeDir;
 
+mod db_models;
 mod models;
 mod routes;
 

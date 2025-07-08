@@ -108,7 +108,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <span class="badge bg-primary">#{{ loan.id }}</span>
-                            <span class="badge {% if loan.status == LoanStatus::InProgress %}bg-warning{% else %}bg-success{% endif %}">
+                            <span class="badge {% match loan.status %} {% when LoanStatus::Awaiting %}bg-warning{% else %}bg-success{% endmatch %}">
                                 {{ loan.status }}
                             </span>
                         </div>
@@ -117,22 +117,24 @@
                         <p class="text-muted mb-2">Ставка: <strong>{{ loan.rate }}</strong> годовых</p>
                         <p class="text-muted mb-2">Срок: <strong>{{ loan.term.num_days() }} дней</strong></p>
                         <p class="text-muted mb-2">Залог: <strong>{{ loan.collateral }}</strong></p>
-                        
+
+                        {% if let LoanStatus::Active { ltv, .. } = loan.status %}
                         <div class="mt-3">
                             <div class="d-flex justify-content-between">
-                                <span>LTV: <strong>{{ loan.ltv }}</strong></span>
+                                <span>LTV: <strong>{{ *ltv }}</strong></span>
                                 <span>
-                                    {% if loan.ltv <= Percent(50.0) %}
+                                    {% if *ltv <= Percent(50.0) %}
                                         <i class="bi bi-check-circle-fill text-success"></i> Безопасно
-                                    {% elif loan.ltv <= Percent(70.0) %}
+                                    {% elif *ltv <= Percent(70.0) %}
                                         <i class="bi bi-exclamation-triangle-fill text-warning"></i> Умеренно
                                     {% else %}
                                         <i class="bi bi-exclamation-triangle-fill text-danger"></i> Рискованно
                                     {% endif %}
                                 </span>
                             </div>
-                            <div class="ltv-indicator {% if loan.ltv <= Percent(50.0) %}ltv-safe{% elif loan.ltv <= Percent(70.0) %}ltv-warning{% else %}ltv-danger{% endif %}"></div>
+                            <div class="ltv-indicator {% if *ltv <= Percent(50.0) %}ltv-safe{% elif *ltv <= Percent(70.0) %}ltv-warning{% else %}ltv-danger{% endif %}"></div>
                         </div>
+                        {% endif %}
                         
                         <div class="mt-3">
                             <small class="text-muted">Создано: {{ loan.created_at }}</small>
@@ -155,7 +157,7 @@
                         </div>
                         <div class="modal-body">
                             <p>Вы собираетесь профинансировать займ на сумму <strong>{{ loan.amount }}</strong> под <strong>{{ loan.rate }}</strong> годовых.</p>
-                            <p>Залог заемщика: <strong>{{ loan.collateral }}</strong> (LTV: {{ loan.ltv }}).</p>
+                            <p>Залог заемщика: <strong>{{ loan.collateral }}</strong></p>
                             <div class="alert alert-info mt-3">
                                 <i class="bi bi-info-circle me-2"></i>Средства будут заблокированы в смарт-контракте до погашения займа.
                             </div>

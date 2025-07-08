@@ -3,7 +3,7 @@
 
 use axum::response::Html;
 use askama::Template;
-use crate::models::Page;
+use super::Page;
 
 /// [`IndexTemplate`] is a template for rendering index page.
 ///

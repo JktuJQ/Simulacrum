@@ -3,7 +3,7 @@
 
 use axum::response::Html;
 use askama::Template;
-use crate::models::Page;
+use super::Page;
 
 /// [`CreateLoanTemplate`] is a template for page that allows creating loans.
 ///
