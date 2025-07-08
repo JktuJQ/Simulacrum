@@ -4,3 +4,7 @@
 
 # Rust
 /target
+
+# shuttle-rs
+/.shuttle*
+/Secrets*.toml

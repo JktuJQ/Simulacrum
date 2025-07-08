@@ -1,6 +1,19 @@
 [package]
 name = "Simulacrum"
+description = "Simulacrum is a decentralized peer lending platform that will simplify the process of issuing and receiving loans between users without intermediaries."
+readme = "README.md"
+repository = "https://github.com/JktuJQ/Simulacrum"
+
+authors = ["JktuJQ <odmamontov@gmail.com>", "WonderWaffle4 <spamwwaff4@yandex.ru>"]
 version = "0.1.0"
-edition = "2024"
+license = "MIT OR Apache-2.0"
+edition = "2021"
 
 [dependencies]
+tokio = "1.28.2"
+
+axum = { version = "0.8.1", features = ["macros"] }
+
+# shuttle-rs
+shuttle-runtime = "0.53.0"
+shuttle-axum = "0.53.0"
