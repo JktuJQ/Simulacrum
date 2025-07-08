@@ -1,16 +1,16 @@
 use axum::response::Html;
 use askama::Template;
-use crate::models::ActivePage;
+use crate::models::Page;
 
 #[derive(Template)]
 #[template(path = "index.html")]
 pub struct IndexTemplate {
-    active_page: ActivePage,
+    active_page: Page,
 }
 impl IndexTemplate {
     pub fn new() -> IndexTemplate {
         IndexTemplate {
-            active_page: ActivePage::Home
+            active_page: Page::Home
         }
     }
 }

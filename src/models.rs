@@ -1,5 +1,5 @@
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
-pub enum ActivePage {
+pub enum Page {
     #[default]
     Home,
     Marketplace,

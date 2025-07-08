@@ -1,17 +1,17 @@
 use axum::response::Html;
 use askama::Template;
-use crate::models::{ActivePage, Loan};
+use crate::models::{Page, Loan};
 
 #[derive(Template)]
 #[template(path = "marketplace.html")]
 pub struct MarketplaceTemplate {
-    active_page: ActivePage,
+    active_page: Page,
     loans: Vec<Loan>,
 }
 
 pub async fn marketplace_route() -> Html<String> {
     let template = MarketplaceTemplate {
-        active_page: ActivePage::Marketplace,
+        active_page: Page::Marketplace,
         loans: vec![
             Loan {
                 id: 1,

@@ -1,16 +1,16 @@
 use axum::response::Html;
 use askama::Template;
-use crate::models::ActivePage;
+use crate::models::Page;
 
 #[derive(Template)]
 #[template(path = "create_loan.html")]
 pub struct CreateLoanTemplate {
-    active_page: ActivePage,
+    active_page: Page,
 }
 impl CreateLoanTemplate {
     pub fn new() -> CreateLoanTemplate {
         CreateLoanTemplate {
-            active_page: ActivePage::CreateLoan
+            active_page: Page::CreateLoan
         }
     }
 }
