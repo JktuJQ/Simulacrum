@@ -2,7 +2,7 @@ use axum::response::Html;
 use askama::Template;
 use crate::models::ActivePage;
 
-#[derive(Template, Default)]
+#[derive(Template)]
 #[template(path = "index.html")]
 pub struct IndexTemplate {
     active_page: ActivePage,
@@ -12,6 +12,11 @@ impl IndexTemplate {
         IndexTemplate {
             active_page: ActivePage::Home
         }
+    }
+}
+impl Default for IndexTemplate {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
