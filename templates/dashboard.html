@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Simulacrum - Моя панель{% endblock %}
+
+{% block extra_head %}
+<style>
+    .dashboard-section {
+        margin-bottom: 40px;
+    }
+    .dashboard-card {
+        transition: transform 0.2s;
+        margin-bottom: 20px;
+    }
+    .dashboard-card:hover {
+        transform: translateY(-3px);
+    }
+    .status-badge {
+        font-size: 0.9rem;
+    }
+    .ltv-progress {
+        height: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+    }
+    .ltv-label {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    .wallet-not-connected {
+        max-width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 40px 20px;
+    }
+    .tab-content {
+        padding-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    {% if !wallet_connected %}
+    <div class="wallet-not-connected">
+        <div class="mb-4">
+            <i class="bi bi-wallet2" style="font-size: 3rem; color: #6c757d;"></i>
+        </div>
+        <h2 class="mb-3">Подключите кошелек</h2>
+        <p class="text-muted mb-4">Чтобы увидеть ваши займы и инвестиции, пожалуйста, подключите ваш криптовалютный кошелек.</p>
+        <button id="connectWalletBtn" class="btn btn-primary btn-lg">
+            <i class="bi bi-wallet2 me-2"></i>Подключить кошелек
+        </button>
+    </div>
+    {% else %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="fw-bold">Моя панель</h1>
+            <p class="lead">Обзор ваших активных займов и инвестиций</p>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="loans-tab" data-bs-toggle="tab" data-bs-target="#loans" type="button" role="tab">
+                Мои займы
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="investments-tab" data-bs-toggle="tab" data-bs-target="#investments" type="button" role="tab">
+                Мои вложения
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="dashboardTabsContent">
+        <div class="tab-pane fade show active" id="loans" role="tabpanel">
+            {% if my_loans.is_empty() %}
+            <div class="empty-state">
+                <i class="bi bi-credit-card-2-front" style="font-size: 3rem; color: #6c757d;"></i>
+                <h3 class="mt-3">У вас нет активных займов</h3>
+                <p class="text-muted">Создайте заявку на заем, чтобы получить средства под залог криптовалюты.</p>
+                <a href="/create-loan" class="btn btn-primary mt-3">Создать заявку</a>
+            </div>
+            {% else %}
+            <div class="row">
+                {% for loan in my_loans %}
+                <div class="col-lg-6">
+                    <div class="card dashboard-card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h3 class="h5 mb-0">Займ #{{ loan.id }}</h3>
+                                <span class="badge {% if loan.status == "Активен" %}bg-success{% else %}bg-danger{% endif %} status-badge">
+                                    {{ loan.status }}
+                                </span>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">Сумма займа</p>
+                                    <p class="h5">{{ loan.amount }} USDC</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">Ставка</p>
+                                    <p class="h5">{{ loan.rate }}%</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">Залог</p>
+                                    <p class="h5">{{ loan.collateral }} ETH</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">Осталось дней</p>
+                                    <p class="h5">{{ loan.days_remaining }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="d-flex justify-content-between ltv-label">
+                                    <span>LTV: <strong>{{ loan.ltv }}%</strong></span>
+                                    <span>
+                                        {% if loan.ltv <= 50.0 %}
+                                            <i class="bi bi-check-circle-fill text-success"></i> Безопасно
+                                        {% elif loan.ltv <= 70.0 %}
+                                            <i class="bi bi-exclamation-triangle-fill text-warning"></i> Внимание
+                                        {% else %}
+                                            <i class="bi bi-exclamation-triangle-fill text-danger"></i> Риск ликвидации!
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="progress ltv-progress">
+                                    <div class="progress-bar 
+                                        {% if loan.ltv <= 50.0 %}bg-success
+                                        {% elif loan.ltv <= 70.0 %}bg-warning
+                                        {% else %}bg-danger
+                                        {% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {{ loan.ltv }}%"
+                                        aria-valuenow="{{ loan.ltv }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 mt-4">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#repayModal{{ loan.id }}">
+                                    <i class="bi bi-cash-coin me-2"></i>Погасить займ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Repay Modal -->
+                <div class="modal fade" id="repayModal{{ loan.id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Погашение займа #{{ loan.id }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Вы собираетесь погасить займ на сумму <strong>{{ loan.amount }} USDC</strong>.</p>
+                                <p>К возврату с процентами: <strong>{{ loan.total_to_repay }} USDC</strong>.</p>
+                                <p>После погашения ваш залог в размере <strong>{{ loan.collateral }} ETH</strong> будет возвращен.</p>
+                                <div class="alert alert-info mt-3">
+                                    <i class="bi bi-info-circle me-2"></i>Транзакция может занять несколько минут для подтверждения в блокчейне.
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <button type="button" class="btn btn-primary">Подтвердить погашение</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="investments" role="tabpanel">
+            {% if my_investments.is_empty() %}
+            <div class="empty-state">
+                <i class="bi bi-piggy-bank" style="font-size: 3rem; color: #6c757d;"></i>
+                <h3 class="mt-3">У вас нет активных вложений</h3>
+                <p class="text-muted">Начните инвестировать, выбрав заявки на маркетплейсе.</p>
+                <a href="/marketplace" class="btn btn-primary mt-3">Перейти к маркетплейсу</a>
+            </div>
+            {% else %}
+            <div class="row">
+                {% for investment in my_investments %}
+                <div class="col-lg-6">
+                    <div class="card dashboard-card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h3 class="h5 mb-0">Инвестиция #{{ investment.id }}</h3>
+                                <span class="badge {% if investment.status == "Ожидает погашения" %}bg-warning{% else %}bg-success{% endif %} status-badge">
+                                    {{ investment.status }}
+                                </span>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">Сумма инвестиции</p>
+                                    <p class="h5">{{ investment.amount }} USDC</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">Ставка</p>
+                                    <p class="h5">{{ investment.rate }}%</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">Заработано</p>
+                                    <p class="h5 text-success">{{ investment.earned }} USDC</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">Осталось дней</p>
+                                    <p class="h5">{{ investment.days_remaining }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">Залог заемщика</p>
+                                    <p class="h5">{{ investment.collateral }} ETH</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-1">LTV</p>
+                                    <p class="h5">{{ investment.ltv }}%</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="d-flex justify-content-between ltv-label">
+                                    <span>Доходность</span>
+                                    <span class="fw-bold">{{ investment.roi }}% годовых</span>
+                                </div>
+                                <div class="progress ltv-progress">
+                                    <div class="progress-bar bg-info" 
+                                        role="progressbar" 
+                                        style="width: {{ investment.progress }}%"
+                                        aria-valuenow="{{ investment.progress }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wallet connection logic
+        document.getElementById('connectWalletBtn')?.addEventListener('click', function() {
+            // In a real app, this would connect to a wallet like MetaMask
+            console.log('Connecting wallet...');
+            alert('В реальном приложении здесь будет подключение кошелька (например, MetaMask)');
+            // After connection, you would reload the page or update the UI
+        });
+        
+        // Tab persistence
+        const dashboardTabs = document.getElementById('dashboardTabs');
+        if (dashboardTabs) {
+            dashboardTabs.addEventListener('shown.bs.tab', function(event) {
+                localStorage.setItem('lastDashboardTab', event.target.getAttribute('id'));
+            });
+            
+            const lastTab = localStorage.getItem('lastDashboardTab');
+            if (lastTab) {
+                const tab = document.querySelector(`#${lastTab}`);
+                if (tab) {
+                    new bootstrap.Tab(tab).show();
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

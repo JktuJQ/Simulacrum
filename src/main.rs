@@ -10,6 +10,7 @@ async fn main() -> shuttle_axum::ShuttleAxum {
         .route("/", get(routes::index_route))
         .route("/marketplace", get(routes::marketplace_route))
         .route("/create-loan", get(routes::create_loan_route))
+        .route("/dashboard", get(routes::dashboard_route))
         .nest_service("/static", ServeDir::new("static"));
 
     Ok(router.into())

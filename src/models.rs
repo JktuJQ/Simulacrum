@@ -16,4 +16,19 @@ pub struct Loan {
     pub ltv: f32,
     pub status: String,
     pub created_at: String,
+    pub days_remaining: u32,
+    pub total_to_repay: String,
+}
+
+pub struct Investment {
+    pub id: u32,
+    pub amount: String,
+    pub rate: f32,
+    pub collateral: String,
+    pub ltv: f32,
+    pub status: String,
+    pub days_remaining: u32,
+    pub earned: String,
+    pub roi: f32,
+    pub progress: f32,
 }

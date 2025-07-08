@@ -22,6 +22,8 @@ pub async fn marketplace_route() -> Html<String> {
                 ltv: 45.0f32,
                 status: "Ожидает финансирования".to_string(),
                 created_at: "2 часа назад".to_string(),
+                days_remaining: 25,
+                total_to_repay: "1,687.50".to_string(),
             },
             Loan {
                 id: 2,
@@ -32,6 +34,8 @@ pub async fn marketplace_route() -> Html<String> {
                 ltv: 65.0,
                 status: "Ожидает финансирования".to_string(),
                 created_at: "5 часов назад".to_string(),
+                days_remaining: 25,
+                total_to_repay: "1,687.50".to_string(),
             },
             Loan {
                 id: 3,
@@ -42,6 +46,8 @@ pub async fn marketplace_route() -> Html<String> {
                 ltv: 75.0,
                 status: "Ожидает финансирования".to_string(),
                 created_at: "1 день назад".to_string(),
+                days_remaining: 25,
+                total_to_repay: "1,687.50".to_string(),
             },
             // Add more sample loans as needed
         ],
