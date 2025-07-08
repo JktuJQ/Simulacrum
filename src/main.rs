@@ -8,6 +8,7 @@ mod routes;
 async fn main() -> shuttle_axum::ShuttleAxum {
     let router = Router::new()
         .route("/", get(routes::index_route))
+        .route("/marketplace", get(routes::marketplace_route))
         .route("/create-loan", get(routes::create_loan_route))
         .nest_service("/static", ServeDir::new("static"));
 
