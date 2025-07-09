@@ -1,7 +1,7 @@
 //! Models that represent market objects.
 //!
 
-use crate::db_models::UserId;
+use crate::db::UserId;
 use std::fmt;
 use chrono::{TimeDelta, DateTime, Utc};
 use super::common::Percent;

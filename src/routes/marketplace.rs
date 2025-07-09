@@ -5,7 +5,7 @@ use axum::response::Html;
 use askama::Template;
 use chrono::{TimeDelta, TimeZone, Utc};
 
-use crate::db_models::UserId;
+use crate::db::UserId;
 use super::Page;
 use crate::models::{common::Percent, market::{LoanId, USDC, ETH, LoanStatus, Loan, Wallet}};
 

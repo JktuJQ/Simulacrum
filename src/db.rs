@@ -1,4 +1,12 @@
+use sqlx::{FromRow, PgPool};
 use std::num::TryFromIntError;
+
+/// [`DB`] struct holds pool of connections of the website's Postgres database.
+///
+/// It implements `Clone` which allows obtaining new connections.
+///
+#[derive(Clone, Debug)]
+pub struct DB(pub PgPool);
 
 /// [`UserId`] newtype wraps user id from database.
 ///
