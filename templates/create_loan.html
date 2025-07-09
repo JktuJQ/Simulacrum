@@ -1,131 +1,679 @@
 {% extends "base.html" %}
 
-{% block title %}Создать заявку | Simulacrum{% endblock %}
+{% block title %}Simulacrum - Создать заявку на займ{% endblock %}
 
 {% block extra_head %}
 <style>
+    .create-loan-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 3rem 0;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .form-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+        border: 1px solid var(--gray-200);
+    }
+    
+    .form-section h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--gray-900);
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-section h2 i {
+        margin-right: 0.5rem;
+        color: var(--primary);
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
     .calculator-card {
+        background: var(--gray-50);
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid var(--gray-200);
         position: sticky;
-        top: 20px;
+        top: 100px;
+        height: fit-content;
     }
-    .form-control:focus {
-        border-color: #4f46e5;
-        box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+    
+    .calculator-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--gray-200);
     }
-    .token-select {
-        border-radius: 0 0.375rem 0.375rem 0 !important;
+    
+    .calculator-item:last-child {
+        border-bottom: none;
     }
-
-    .calculator-card {
-        background: #f8f9fa;
-        border-radius: 0.5rem;
+    
+    .calculator-label {
+        color: var(--gray-600);
+        font-size: 0.875rem;
     }
-
-    .token-select {
+    
+    .calculator-value {
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+    
+    .ltv-indicator {
+        margin-top: 1rem;
+    }
+    
+    .ltv-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .ltv-value {
+        font-weight: 700;
+        font-size: 1.125rem;
+    }
+    
+    .ltv-status {
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+    
+    .ltv-status i {
+        margin-right: 0.25rem;
+    }
+    
+    .ltv-safe {
+        color: var(--success);
+    }
+    
+    .ltv-warning {
+        color: var(--warning);
+    }
+    
+    .ltv-danger {
+        color: var(--error);
+    }
+    
+    .ltv-progress {
+        height: 10px;
+        background: var(--gray-200);
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    
+    .ltv-progress-bar {
+        height: 100%;
+        transition: width 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .ltv-progress-safe {
+        background: var(--success);
+    }
+    
+    .ltv-progress-warning {
+        background: var(--warning);
+    }
+    
+    .ltv-progress-danger {
+        background: var(--error);
+    }
+    
+    .info-box {
+        background: rgba(79, 70, 229, 0.05);
+        border: 1px solid rgba(79, 70, 229, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .info-box-content {
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .info-box i {
+        color: var(--primary);
+        margin-right: 0.75rem;
+        margin-top: 0.125rem;
+    }
+    
+    .info-box-text {
+        font-size: 0.875rem;
+        color: var(--gray-700);
+        line-height: 1.5;
+    }
+    
+    .submit-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-200);
+    }
+    
+    .submit-button {
+        width: 100%;
+        padding: 1rem 2rem;
+        font-size: 1.125rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .submit-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+    }
+    
+    .submit-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .submit-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .submit-button:hover::before {
+        left: 100%;
+    }
+    
+    .token-selector {
+        display: flex;
+        border: 2px solid var(--gray-300);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        transition: border-color 0.2s ease;
+    }
+    
+    .token-selector:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    
+    .token-selector input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        background: white;
+    }
+    
+    .token-selector select {
+        padding: 0.75rem 1rem;
+        border: none;
+        outline: none;
+        background: var(--gray-100);
+        font-weight: 600;
+        color: var(--gray-700);
+        cursor: pointer;
         min-width: 100px;
     }
-
-    .input-group-text {
-        background-color: #e9ecef;
+    
+    .form-group {
+        margin-bottom: 1.5rem;
     }
-
-    #submitBtn {
+    
+    .form-help {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+        margin-top: 0.5rem;
+    }
+    
+    .validation-message {
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 6px;
+        display: none;
+    }
+    
+    .validation-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--error);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    .validation-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    .progress-steps {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+    
+    .step {
+        display: flex;
+        align-items: center;
+        color: var(--gray-400);
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+    
+    .step.active {
+        color: var(--primary);
+    }
+    
+    .step-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.5rem;
+        font-weight: 700;
         transition: all 0.3s ease;
     }
-
-    #submitBtn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    
+    .step.active .step-number {
+        background: var(--primary);
+        color: white;
+    }
+    
+    .step-connector {
+        width: 60px;
+        height: 2px;
+        background: var(--gray-200);
+        margin: 0 1rem;
+    }
+    
+    .step.active + .step .step-connector {
+        background: var(--primary);
+    }
+    
+    .warning-box {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .warning-box-content {
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .warning-box i {
+        color: var(--warning);
+        margin-right: 0.75rem;
+        margin-top: 0.125rem;
+    }
+    
+    .warning-box-text {
+        font-size: 0.875rem;
+        color: var(--gray-700);
+        line-height: 1.5;
+    }
+    
+    @media (max-width: 768px) {
+        .create-loan-header {
+            padding: 2rem 0;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .calculator-card {
+            position: static;
+            margin-top: 2rem;
+        }
+        
+        .progress-steps {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .step-connector {
+            width: 2px;
+            height: 60px;
+            margin: 1rem 0;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-lg-8">
-            <h1 class="mb-4">Создать заявку на заем</h1>
+<section class="create-loan-header">
+    <div class="container">
+        <div style="text-align: center;">
+            <h1 class="text-4xl font-bold" style="margin-bottom: 1rem;">Создать заявку на займ</h1>
+            <p class="text-xl text-gray-600">Получите средства под залог криптовалюты</p>
+        </div>
+    </div>
+</section>
 
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-4">
-                    <h2 class="h5 mb-4">1. Параметры займа</h2>
-
-                    <div class="mb-3">
-                        <label for="loanAmount" class="form-label">Сумма, которую хотите занять</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" id="loanAmount" placeholder="1000">
-                            <select class="form-select token-select" id="loanToken">
-                                <option selected>USDC</option>
+<div class="container" style="padding: 2rem 0;">
+    <div class="progress-steps">
+        <div class="step active">
+            <div class="step-number">1</div>
+            <span>Параметры займа</span>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <span>Внесение залога</span>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <span>Подтверждение</span>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 gap-8" style="grid-template-columns: 2fr 1fr;">
+        <div>
+            <div class="form-section">
+                <h2>
+                    <i class="bi bi-currency-dollar"></i>
+                    Параметры займа
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Сумма займа</label>
+                        <div class="token-selector">
+                            <input type="number" 
+                                   id="loanAmount" 
+                                   placeholder="1000" 
+                                   value="1000"
+                                   min="100"
+                                   max="100000"
+                                   step="100">
+                            <select id="loanToken">
+                                <option value="USDC">USDC</option>
+                                <option value="USDT">USDT</option>
+                                <option value="DAI">DAI</option>
                             </select>
                         </div>
+                        <div class="form-help">
+                            Минимальная сумма: $100, максимальная: $100,000
+                        </div>
+                        <div class="validation-message validation-error" id="loanAmountError">
+                            Сумма должна быть от $100 до $100,000
+                        </div>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="loanDuration" class="form-label">Срок займа (дней)</label>
-                        <select class="form-select" id="loanDuration">
-                            <option>30</option>
-                            <option selected>60</option>
-                            <option>90</option>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Срок займа</label>
+                        <select class="form-control" id="loanDuration">
+                            <option value="7">7 дней</option>
+                            <option value="14">14 дней</option>
+                            <option value="30">30 дней</option>
+                            <option value="60" selected>60 дней</option>
+                            <option value="90">90 дней</option>
+                            <option value="180">180 дней</option>
+                        </select>
+                        <div class="form-help">
+                            Выберите подходящий срок для возврата займа
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Процентная ставка (годовая)</label>
+                    <div class="token-selector">
+                        <input type="number" 
+                               id="interestRate" 
+                               placeholder="12.5" 
+                               value="12.5"
+                               min="5"
+                               max="30"
+                               step="0.1">
+                        <select disabled>
+                            <option>% годовых</option>
                         </select>
                     </div>
-
-                    <div class="mb-4">
-                        <label for="interestRate" class="form-label">Предлагаемая процентная ставка (годовая)</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" id="interestRate" placeholder="10" value="10">
-                            <span class="input-group-text">%</span>
-                        </div>
+                    <div class="form-help">
+                        Укажите процентную ставку от 5% до 30% годовых
                     </div>
-
-                    <h2 class="h5 mb-4">2. Залог</h2>
-
-                    <div class="mb-4">
-                        <label for="collateralAmount" class="form-label">Сумма залога</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" id="collateralAmount" placeholder="1.0">
-                            <select class="form-select token-select" id="collateralToken">
-                                <option selected>WETH</option>
+                    <div class="validation-message validation-error" id="interestRateError">
+                        Ставка должна быть от 5% до 30% годовых
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>
+                    <i class="bi bi-shield-lock"></i>
+                    Залог
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Размер залога</label>
+                        <div class="token-selector">
+                            <input type="number" 
+                                   id="collateralAmount" 
+                                   placeholder="0.5" 
+                                   value="0.5"
+                                   min="0.01"
+                                   max="100"
+                                   step="0.01">
+                            <select id="collateralToken">
+                                <option value="ETH">ETH</option>
+                                <option value="BTC">BTC</option>
+                                <option value="BNB">BNB</option>
                             </select>
                         </div>
+                        <div class="form-help">
+                            Минимальный залог: 0.01 ETH
+                        </div>
+                        <div class="validation-message validation-error" id="collateralAmountError">
+                            Недостаточный размер залога
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Цена ликвидации</label>
+                        <div class="token-selector">
+                            <input type="number" 
+                                   id="liquidationPrice" 
+                                   readonly
+                                   value="1600">
+                            <select disabled>
+                                <option>USD/ETH</option>
+                            </select>
+                        </div>
+                        <div class="form-help">
+                            Цена ETH, при которой произойдет ликвидация залога
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="warning-box" id="liquidationWarning" style="display: none;">
+                    <div class="warning-box-content">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <div class="warning-box-text">
+                            <strong>Внимание!</strong> Цена ликвидации слишком близка к текущей цене ETH. 
+                            Увеличьте залог или уменьшите сумму займа для снижения риска.
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            <div class="submit-section">
+                <button class="submit-button" id="submitButton" disabled>
+                    <i class="bi bi-wallet2 me-2"></i>
+                    Создать заявку и внести залог
+                </button>
+                
+                <div class="info-box">
+                    <div class="info-box-content">
+                        <i class="bi bi-info-circle"></i>
+                        <div class="info-box-text">
+                            <strong>Как это работает:</strong><br>
+                            1. Ваш залог будет заблокирован в смарт-контракте<br>
+                            2. После подтверждения заявки инвесторы смогут её профинансировать<br>
+                            3. Средства поступят на ваш кошелек мгновенно после финансирования<br>
+                            4. Погасите займ в срок, чтобы получить залог обратно
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div>
+            <div class="calculator-card">
+                <h3 class="text-xl font-bold" style="margin-bottom: 1.5rem; color: var(--gray-900);">
+                    Расчет займа
+                </h3>
+                
+                <div class="calculator-item">
+                    <div class="calculator-label">Сумма займа</div>
+                    <div class="calculator-value" id="calcLoanAmount">$1,000 USDC</div>
+                </div>
+                
+                <div class="calculator-item">
+                    <div class="calculator-label">Процентная ставка</div>
+                    <div class="calculator-value" id="calcInterestRate">12.5% годовых</div>
+                </div>
+                
+                <div class="calculator-item">
+                    <div class="calculator-label">Срок займа</div>
+                    <div class="calculator-value" id="calcDuration">60 дней</div>
+                </div>
+                
+                <div class="calculator-item">
+                    <div class="calculator-label">Залог</div>
+                    <div class="calculator-value" id="calcCollateral">0.5 ETH</div>
+                </div>
+                
+                <div class="calculator-item">
+                    <div class="calculator-label">К возврату</div>
+                    <div class="calculator-value text-primary" id="calcRepayment">$1,021 USDC</div>
+                </div>
+                
+                <div class="ltv-indicator">
+                    <div class="ltv-header">
+                        <div class="ltv-value" id="calcLTV">50%</div>
+                        <div class="ltv-status ltv-safe" id="calcLTVStatus">
+                            <i class="bi bi-shield-check"></i>
+                            Безопасно
+                        </div>
+                    </div>
+                    <div class="ltv-progress">
+                        <div class="ltv-progress-bar ltv-progress-safe" id="calcLTVBar" style="width: 50%"></div>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <div class="info-box-content">
+                        <i class="bi bi-lightbulb"></i>
+                        <div class="info-box-text">
+                            <strong>LTV (Loan-to-Value)</strong> - соотношение займа к стоимости залога. 
+                            Чем меньше LTV, тем безопаснее займ для инвесторов.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <button id="submitBtn" class="btn btn-primary btn-lg w-100 py-3">
-                <i class="bi bi-wallet2 me-2"></i>Создать заявку и внести залог
+<!-- Success Modal -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Заявка успешно создана!</h3>
+            <button class="modal-close" onclick="closeModal('successModal')">
+                <i class="bi bi-x"></i>
             </button>
         </div>
-
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm calculator-card">
-                <div class="card-body p-4">
-                    <h2 class="h5 mb-4">Расчет займа</h2>
-
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Соотношение LTV</span>
-                        <span class="fw-bold" id="ltvValue">65%</span>
+        <div class="modal-body">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="width: 80px; height: 80px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="bi bi-check-lg" style="font-size: 2rem; color: white;"></i>
+                </div>
+                <h4 style="margin-bottom: 0.5rem;">Заявка #LN-2024-005 создана</h4>
+                <p class="text-gray-600">Ваш залог заблокирован в смарт-контракте</p>
+            </div>
+            
+            <div style="background: var(--gray-50); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-gray-600" style="font-size: 0.875rem;">Сумма займа</div>
+                        <div class="font-bold" id="modalLoanAmount">$1,000 USDC</div>
                     </div>
-
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Цена ликвидации</span>
-                        <span class="fw-bold" id="liquidationPrice">$2300/ETH</span>
+                    <div>
+                        <div class="text-gray-600" style="font-size: 0.875rem;">Ставка</div>
+                        <div class="font-bold" id="modalRate">12.5% годовых</div>
                     </div>
-
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Сумма к возврату</span>
-                        <span class="fw-bold" id="repaymentAmount">1010 USDC</span>
+                    <div>
+                        <div class="text-gray-600" style="font-size: 0.875rem;">Срок</div>
+                        <div class="font-bold" id="modalDuration">60 дней</div>
                     </div>
-
-                    <hr class="my-4">
-
-                    <div class="alert alert-info">
-                        <small>
-                            <i class="bi bi-info-circle me-2"></i>
-                            Ваш залог будет заблокирован в смарт-контракте до полного погашения займа.
-                        </small>
+                    <div>
+                        <div class="text-gray-600" style="font-size: 0.875rem;">Залог</div>
+                        <div class="font-bold" id="modalCollateral">0.5 ETH</div>
                     </div>
                 </div>
             </div>
+            
+            <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <div class="flex items-center">
+                    <i class="bi bi-info-circle text-success me-2"></i>
+                    <div style="font-size: 0.875rem;">
+                        <strong>Что дальше?</strong><br>
+                        Ваша заявка появится в маркетплейсе, где инвесторы смогут её профинансировать. 
+                        Средства поступят на ваш кошелек сразу после финансирования.
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1rem;">
+                    Отслеживайте статус заявки в личном кабинете
+                </p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('successModal')">
+                Закрыть
+            </button>
+            <a href="/dashboard" class="btn btn-primary">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Перейти в панель
+            </a>
         </div>
     </div>
 </div>
@@ -133,34 +681,180 @@
 
 {% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const calculateValues = () => {
-            const loanAmount = parseFloat(document.getElementById('loanAmount').value) || 0;
-            const collateralAmount = parseFloat(document.getElementById('collateralAmount').value) || 0;
-            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
-            const duration = parseInt(document.getElementById('loanDuration').value) || 60;
-
-            const ltv = collateralAmount > 0 ? (loanAmount / collateralAmount * 100).toFixed(0) : 0;
-            document.getElementById('ltvValue').textContent = `${ltv}%`;
-
-            const liquidationPrice = (loanAmount / collateralAmount * 1.5).toFixed(2);
-            document.getElementById('liquidationPrice').textContent = `$${liquidationPrice}/ETH`;
-
-            const interest = loanAmount * (interestRate / 100) * (duration / 365);
-            const repayment = (loanAmount + interest).toFixed(2);
-            document.getElementById('repaymentAmount').textContent = `${repayment} USDC`;
-        };
-
-        ['loanAmount', 'collateralAmount', 'interestRate', 'loanDuration'].forEach(id => {
-            document.getElementById(id).addEventListener('input', calculateValues);
+    // Current ETH price (in real app would be fetched from API)
+    const ETH_PRICE = 2400;
+    
+    // Form elements
+    const loanAmount = document.getElementById('loanAmount');
+    const loanToken = document.getElementById('loanToken');
+    const loanDuration = document.getElementById('loanDuration');
+    const interestRate = document.getElementById('interestRate');
+    const collateralAmount = document.getElementById('collateralAmount');
+    const collateralToken = document.getElementById('collateralToken');
+    const liquidationPrice = document.getElementById('liquidationPrice');
+    const submitButton = document.getElementById('submitButton');
+    
+    // Calculator elements
+    const calcLoanAmount = document.getElementById('calcLoanAmount');
+    const calcInterestRate = document.getElementById('calcInterestRate');
+    const calcDuration = document.getElementById('calcDuration');
+    const calcCollateral = document.getElementById('calcCollateral');
+    const calcRepayment = document.getElementById('calcRepayment');
+    const calcLTV = document.getElementById('calcLTV');
+    const calcLTVStatus = document.getElementById('calcLTVStatus');
+    const calcLTVBar = document.getElementById('calcLTVBar');
+    
+    // Update calculations
+    function updateCalculations() {
+        const loanAmountValue = parseFloat(loanAmount.value) || 0;
+        const loanTokenValue = loanToken.value;
+        const loanDurationValue = parseInt(loanDuration.value) || 0;
+        const interestRateValue = parseFloat(interestRate.value) || 0;
+        const collateralAmountValue = parseFloat(collateralAmount.value) || 0;
+        const collateralTokenValue = collateralToken.value;
+        
+        // Update calculator display
+        calcLoanAmount.textContent = `$${loanAmountValue.toLocaleString()} ${loanTokenValue}`;
+        calcInterestRate.textContent = `${interestRateValue}% годовых`;
+        calcDuration.textContent = `${loanDurationValue} дней`;
+        calcCollateral.textContent = `${collateralAmountValue} ${collateralTokenValue}`;
+        
+        // Calculate repayment amount
+        const dailyRate = interestRateValue / 365 / 100;
+        const totalInterest = loanAmountValue * dailyRate * loanDurationValue;
+        const repaymentAmount = loanAmountValue + totalInterest;
+        calcRepayment.textContent = `$${repaymentAmount.toFixed(2)} ${loanTokenValue}`;
+        
+        // Calculate LTV
+        const collateralValue = collateralAmountValue * ETH_PRICE;
+        const ltv = collateralValue > 0 ? (loanAmountValue / collateralValue * 100) : 0;
+        
+        calcLTV.textContent = `${ltv.toFixed(0)}%`;
+        calcLTVBar.style.width = `${Math.min(ltv, 100)}%`;
+        
+        // Update LTV status
+        if (ltv <= 50) {
+            calcLTVStatus.innerHTML = '<i class="bi bi-shield-check"></i> Безопасно';
+            calcLTVStatus.className = 'ltv-status ltv-safe';
+            calcLTVBar.className = 'ltv-progress-bar ltv-progress-safe';
+        } else if (ltv <= 70) {
+            calcLTVStatus.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Умеренно';
+            calcLTVStatus.className = 'ltv-status ltv-warning';
+            calcLTVBar.className = 'ltv-progress-bar ltv-progress-warning';
+        } else {
+            calcLTVStatus.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> Рискованно';
+            calcLTVStatus.className = 'ltv-status ltv-danger';
+            calcLTVBar.className = 'ltv-progress-bar ltv-progress-danger';
+        }
+        
+        // Calculate liquidation price
+        const liquidationPriceValue = collateralAmountValue > 0 ? (loanAmountValue * 1.2) / collateralAmountValue : 0;
+        liquidationPrice.value = liquidationPriceValue.toFixed(0);
+        
+        // Show warning if liquidation price is close to current price
+        const liquidationWarning = document.getElementById('liquidationWarning');
+        if (liquidationPriceValue > ETH_PRICE * 0.8) {
+            liquidationWarning.style.display = 'block';
+        } else {
+            liquidationWarning.style.display = 'none';
+        }
+        
+        // Validate form
+        validateForm();
+    }
+    
+    function validateForm() {
+        let isValid = true;
+        
+        // Validate loan amount
+        const loanAmountValue = parseFloat(loanAmount.value) || 0;
+        const loanAmountError = document.getElementById('loanAmountError');
+        if (loanAmountValue < 100 || loanAmountValue > 100000) {
+            loanAmountError.style.display = 'block';
+            isValid = false;
+        } else {
+            loanAmountError.style.display = 'none';
+        }
+        
+        // Validate interest rate
+        const interestRateValue = parseFloat(interestRate.value) || 0;
+        const interestRateError = document.getElementById('interestRateError');
+        if (interestRateValue < 5 || interestRateValue > 30) {
+            interestRateError.style.display = 'block';
+            isValid = false;
+        } else {
+            interestRateError.style.display = 'none';
+        }
+        
+        // Validate collateral amount
+        const collateralAmountValue = parseFloat(collateralAmount.value) || 0;
+        const collateralAmountError = document.getElementById('collateralAmountError');
+        if (collateralAmountValue < 0.01) {
+            collateralAmountError.style.display = 'block';
+            isValid = false;
+        } else {
+            collateralAmountError.style.display = 'none';
+        }
+        
+        // Check if LTV is reasonable
+        const collateralValue = collateralAmountValue * ETH_PRICE;
+        const ltv = collateralValue > 0 ? (loanAmountValue / collateralValue * 100) : 0;
+        if (ltv > 80) {
+            collateralAmountError.textContent = 'LTV слишком высокий (>80%). Увеличьте залог.';
+            collateralAmountError.style.display = 'block';
+            isValid = false;
+        } else {
+            collateralAmountError.textContent = 'Недостаточный размер залога';
+        }
+        
+        // Enable/disable submit button
+        submitButton.disabled = !isValid;
+    }
+    
+    function submitLoan() {
+        const loanAmountValue = parseFloat(loanAmount.value);
+        const loanTokenValue = loanToken.value;
+        const loanDurationValue = parseInt(loanDuration.value);
+        const interestRateValue = parseFloat(interestRate.value);
+        const collateralAmountValue = parseFloat(collateralAmount.value);
+        const collateralTokenValue = collateralToken.value;
+        
+        // Update modal with current values
+        document.getElementById('modalLoanAmount').textContent = `$${loanAmountValue.toLocaleString()} ${loanTokenValue}`;
+        document.getElementById('modalRate').textContent = `${interestRateValue}% годовых`;
+        document.getElementById('modalDuration').textContent = `${loanDurationValue} дней`;
+        document.getElementById('modalCollateral').textContent = `${collateralAmountValue} ${collateralTokenValue}`;
+        
+        // In a real application, this would trigger blockchain transaction
+        console.log('Creating loan with parameters:', {
+            amount: loanAmountValue,
+            token: loanTokenValue,
+            duration: loanDurationValue,
+            rate: interestRateValue,
+            collateral: collateralAmountValue,
+            collateralToken: collateralTokenValue
         });
-
-        calculateValues();
-
-        document.getElementById('submitBtn').addEventListener('click', async () => {
-            console.log('Creating loan request...');
-            alert('В реальном приложении здесь будет вызов MetaMask для подтверждения транзакции');
+        
+        // Show success modal
+        openModal('successModal');
+        
+        // Update progress steps
+        document.querySelectorAll('.step').forEach((step, index) => {
+            if (index < 2) {
+                step.classList.add('active');
+            }
         });
+    }
+    
+    // Event listeners
+    [loanAmount, loanToken, loanDuration, interestRate, collateralAmount, collateralToken].forEach(element => {
+        element.addEventListener('input', updateCalculations);
+        element.addEventListener('change', updateCalculations);
     });
+    
+    submitButton.addEventListener('click', submitLoan);
+    
+    // Initial calculation
+    updateCalculations();
 </script>
 {% endblock %}

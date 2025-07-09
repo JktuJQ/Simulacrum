@@ -1,122 +1,534 @@
 {% extends "base.html" %}
 
-{% block title %}Simulacrum - P2P Кредитование{% endblock %}
+{% block title %}Simulacrum - Децентрализованная платформа P2P кредитования{% endblock %}
+
+{% block extra_head %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        padding: 6rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: float 20s ease-in-out infinite;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .hero-image {
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        transform: perspective(1000px) rotateY(-5deg);
+        transition: transform 0.5s ease;
+    }
+    
+    .hero-image:hover {
+        transform: perspective(1000px) rotateY(0deg);
+    }
+    
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin: 2.5rem 0;
+    }
+    
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid transparent;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        border-color: var(--primary);
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        color: white;
+        font-size: 1.5rem;
+    }
+    
+    .stats-section {
+        background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+        padding: 3rem 0;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: center;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--primary);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-value {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+    }
+    
+    .stat-label {
+        color: var(--gray-600);
+        font-weight: 500;
+        margin-top: 0.5rem;
+    }
+    
+    .stat-change {
+        margin-top: 1rem;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        padding: 6rem 0;
+        text-align: center;
+    }
+    
+    .cta-content {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .user-avatars {
+        display: flex;
+        align-items: center;
+        margin-top: 2rem;
+    }
+    
+    .user-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 3px solid white;
+        margin-left: -12px;
+        background: linear-gradient(135deg, #ff7eb3, #ff65a3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .user-avatar:first-child {
+        margin-left: 0;
+    }
+    
+    .testimonial-section {
+        padding: 6rem 0;
+        background: white;
+    }
+    
+    .testimonial-card {
+        background: var(--gray-50);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .testimonial-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-4px);
+    }
+    
+    .testimonial-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.5rem;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+    
+    .steps-section {
+        padding: 6rem 0;
+        background: white;
+    }
+    
+    .step-card {
+        text-align: center;
+        position: relative;
+    }
+    
+    .step-number {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    .step-connector {
+        position: absolute;
+        top: 30px;
+        left: 50%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        transform: translateX(-50%);
+        z-index: -1;
+    }
+    
+    .step-card:last-child .step-connector {
+        display: none;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 4rem 0;
+        }
+        
+        .feature-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-section {
+            padding: 4rem 0;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+        }
+        
+        .step-connector {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <section class="hero-section">
-    <div class="container py-5">
-        <div class="row align-items-center py-5">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">Получите заем под залог криптовалюты</h1>
-                <p class="lead mb-4">Быстро, прозрачно и на ваших условиях. Или станьте кредитором и зарабатывайте на своих активах больше, чем в банке.</p>
-                <div class="d-flex gap-3">
-                    <a href="/marketplace" class="btn btn-primary btn-lg px-4">Посмотреть займы</a>
-                    <a href="/create-loan" class="btn btn-outline-dark btn-lg px-4">Создать заявку</a>
+    <div class="container">
+        <div class="grid grid-cols-1 gap-8" style="grid-template-columns: 1fr 1fr; align-items: center;">
+            <div class="hero-content animate-fadeInUp">
+                <h1 class="text-5xl font-bold" style="margin-bottom: 1.5rem; line-height: 1.1;">
+                    Децентрализованные займы под залог криптовалюты
+                </h1>
+                <p class="text-xl" style="margin-bottom: 2rem; opacity: 0.9;">
+                    Получайте займы или инвестируйте средства напрямую между пользователями. 
+                    Без банков, без посредников, на ваших условиях.
+                </p>
+                <div class="flex space-x-4" style="margin-bottom: 2rem;">
+                    <a href="/marketplace" class="btn btn-secondary btn-lg btn-glow">
+                        <i class="bi bi-graph-up me-2"></i>
+                        Начать инвестировать
+                    </a>
+                    <a href="/create-loan" class="btn btn-outline btn-lg">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Создать заявку
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <div class="user-avatars">
+                        <div class="user-avatar">A</div>
+                        <div class="user-avatar">B</div>
+                        <div class="user-avatar">C</div>
+                        <div class="user-avatar">D</div>
+                        <div class="user-avatar">+</div>
+                    </div>
+                    <div style="margin-left: 1rem;">
+                        <div class="flex items-center">
+                            <div class="pulse-dot"></div>
+                            <span style="font-weight: 600;">Более 2,500+ активных пользователей</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <img src="https://via.placeholder.com/600x400" alt="Криптозалог" class="img-fluid rounded-3 shadow">
+            <div class="animate-float" style="display: none;">
+                <img src="https://images.pexels.com/photos/7567444/pexels-photo-7567444.jpeg?auto=compress&cs=tinysrgb&w=600" 
+                     alt="Криптовалютное кредитование" 
+                     class="hero-image" 
+                     style="width: 100%; height: 400px; object-fit: cover;">
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-5 bg-light">
-    <div class="container py-5">
-        <h2 class="text-center fw-bold mb-5">Как это работает</h2>
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="h4 text-center mb-4">Для заемщиков</h3>
-                        <div class="d-flex mb-3">
-                            <div class="me-4">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">1</div>
-                            </div>
-                            <div>
-                                <h4 class="h5">Создаете заявку</h4>
-                                <p class="text-muted mb-0">Укажите сумму, срок и процентную ставку</p>
-                            </div>
-                        </div>
-                        <div class="d-flex mb-3">
-                            <div class="me-4">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">2</div>
-                            </div>
-                            <div>
-                                <h4 class="h5">Вносите залог</h4>
-                                <p class="text-muted mb-0">Блокируете криптовалюту в смарт-контракте</p>
-                            </div>
-                        </div>
-                        <div class="d-flex">
-                            <div class="me-4">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">3</div>
-                            </div>
-                            <div>
-                                <h4 class="h5">Получаете средства</h4>
-                                <p class="text-muted mb-0">Деньги поступают мгновенно на ваш кошелек</p>
-                            </div>
-                        </div>
-                    </div>
+<section class="steps-section">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <h2 class="text-4xl font-bold" style="margin-bottom: 1rem;">Как это работает</h2>
+            <p class="text-xl text-gray-600">Простая и прозрачная система кредитования в 3 шага</p>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-8">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-connector"></div>
+                <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Создайте заявку</h3>
+                <p class="text-gray-600">
+                    Укажите сумму займа, срок, процентную ставку и заблокируйте криптовалюту в качестве залога
+                </p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-connector"></div>
+                <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Получите финансирование</h3>
+                <p class="text-gray-600">
+                    Инвесторы профинансируют ваш займ, и средства мгновенно поступят на ваш кошелек
+                </p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Верните заем</h3>
+                <p class="text-gray-600">
+                    Погасите займ в установленный срок и получите обратно свой залог из смарт-контракта
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="feature-grid">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <h2 class="text-4xl font-bold" style="margin-bottom: 1rem;">Преимущества платформы</h2>
+            <p class="text-xl text-gray-600">Современные технологии для безопасного кредитования</p>
+        </div>
+        
+        <div class="grid grid-cols-1 gap-8" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Безопасность</h3>
+                <p class="text-gray-600">
+                    Смарт-контракты автоматически управляют залогом и выплатами, 
+                    исключая возможность мошенничества
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-lightning-charge"></i>
+                </div>
+                <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Мгновенные переводы</h3>
+                <p class="text-gray-600">
+                    Получайте средства сразу после подтверждения транзакции в блокчейне, 
+                    без ожидания банковских переводов
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Высокая доходность</h3>
+                <p class="text-gray-600">
+                    Зарабатывайте до 20% годовых, инвестируя в займы с надежным 
+                    криптовалютным залогом
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-globe"></i>
+                </div>
+                <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Глобальная доступность</h3>
+                <p class="text-gray-600">
+                    Платформа работает 24/7 по всему миру, нужен только 
+                    криптовалютный кошелек и интернет
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-eye"></i>
+                </div>
+                <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Прозрачность</h3>
+                <p class="text-gray-600">
+                    Все транзакции записываются в блокчейн и доступны для проверки, 
+                    полная прозрачность процесса
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+                <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Без KYC</h3>
+                <p class="text-gray-600">
+                    Не требуется верификация личности, только подключение 
+                    криптовалютного кошелька
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <h2 class="text-4xl font-bold" style="margin-bottom: 1rem;">Платформа в цифрах</h2>
+            <p class="text-xl text-gray-600">Мы растем вместе с нашими пользователями</p>
+        </div>
+        
+        <div class="grid grid-cols-1 gap-8" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+            <div class="stat-card">
+                <div class="stat-value" id="tvlValue">$1.2M</div>
+                <div class="stat-label">Общий объем залогов</div>
+                <div class="stat-change">
+                    <span class="badge badge-success">+12% за месяц</span>
                 </div>
             </div>
-
-            <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="h4 text-center mb-4">Для кредиторов</h3>
-                        <div class="d-flex mb-3">
-                            <div class="me-4">
-                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">1</div>
-                            </div>
-                            <div>
-                                <h4 class="h5">Выбираете заявку</h4>
-                                <p class="text-muted mb-0">Фильтруйте по параметрам и рейтингам</p>
-                            </div>
-                        </div>
-                        <div class="d-flex mb-3">
-                            <div class="me-4">
-                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">2</div>
-                            </div>
-                            <div>
-                                <h4 class="h5">Финансируете</h4>
-                                <p class="text-muted mb-0">Переводите средства заемщику</p>
-                            </div>
-                        </div>
-                        <div class="d-flex">
-                            <div class="me-4">
-                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">3</div>
-                            </div>
-                            <div>
-                                <h4 class="h5">Получаете прибыль</h4>
-                                <p class="text-muted mb-0">Проценты автоматически начисляются на ваш кошелек</p>
-                            </div>
-                        </div>
-                    </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="loansCount">358</div>
+                <div class="stat-label">Активных займов</div>
+                <div class="stat-change">
+                    <span class="badge badge-success">+8% за месяц</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="avgRate">15.8%</div>
+                <div class="stat-label">Средняя ставка</div>
+                <div class="stat-change">
+                    <span class="badge badge-warning">Выгодно</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="usersCount">2.5K</div>
+                <div class="stat-label">Пользователей</div>
+                <div class="stat-change">
+                    <span class="badge badge-primary">+23 новых сегодня</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-5">
-    <div class="container py-5">
-        <h2 class="text-center fw-bold mb-5">Платформа в цифрах</h2>
-        <div class="row text-center">
-            <div class="col-md-3 mb-4">
-                <div class="display-5 fw-bold text-primary">$<span id="tvlValue">1.2M</span></div>
-                <p class="text-muted">Общая сумма залогов</p>
+<section class="testimonial-section">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <h2 class="text-4xl font-bold" style="margin-bottom: 1rem;">Отзывы пользователей</h2>
+            <p class="text-xl text-gray-600">Что говорят о нас наши клиенты</p>
+        </div>
+        
+        <div class="grid grid-cols-1 gap-8" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">А</div>
+                <p style="margin-bottom: 1rem; font-style: italic;">
+                    "Получил займ за 10 минут под 12% годовых. Залог вернули сразу после погашения. 
+                    Очень удобно и прозрачно!"
+                </p>
+                <div class="font-semibold">Алексей К.</div>
+                <div class="text-gray-500">Заемщик</div>
             </div>
-            <div class="col-md-3 mb-4">
-                <div class="display-5 fw-bold text-primary"><span id="loansCount">245</span></div>
-                <p class="text-muted">Активных займов</p>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">М</div>
+                <p style="margin-bottom: 1rem; font-style: italic;">
+                    "Инвестирую уже 6 месяцев, средняя доходность 16%. Риски минимальные 
+                    благодаря залогу в криптовалюте."
+                </p>
+                <div class="font-semibold">Мария С.</div>
+                <div class="text-gray-500">Инвестор</div>
             </div>
-            <div class="col-md-3 mb-4">
-                <div class="display-5 fw-bold text-primary"><span id="avgRate">14.5</span>%</div>
-                <p class="text-muted">Средняя ставка</p>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">Д</div>
+                <p style="margin-bottom: 1rem; font-style: italic;">
+                    "Отличная альтернатива банковским кредитам. Никаких справок и долгих ожиданий. 
+                    Рекомендую всем!"
+                </p>
+                <div class="font-semibold">Дмитрий В.</div>
+                <div class="text-gray-500">Заемщик</div>
             </div>
-            <div class="col-md-3 mb-4">
-                <div class="display-5 fw-bold text-primary"><span id="usersCount">1.8K</span></div>
-                <p class="text-muted">Пользователей</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="text-4xl font-bold" style="margin-bottom: 1.5rem;">Готовы начать?</h2>
+            <p class="text-xl" style="margin-bottom: 2rem; opacity: 0.9;">
+                Присоединяйтесь к тысячам пользователей, которые уже используют 
+                нашу платформу для взаимовыгодного кредитования
+            </p>
+            <div class="flex space-x-4" style="justify-content: center;">
+                <a href="/marketplace" class="btn btn-secondary btn-lg btn-glow">
+                    <i class="bi bi-graph-up me-2"></i>
+                    Начать инвестировать
+                </a>
+                <a href="/create-loan" class="btn btn-outline btn-lg">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Создать заявку
+                </a>
             </div>
         </div>
     </div>
@@ -125,11 +537,59 @@
 
 {% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        setInterval(() => {
-            const tvl = parseFloat(document.getElementById('tvlValue').textContent.replace('$', ''));
-            document.getElementById('tvlValue').textContent = (tvl + 0.1).toFixed(1) + 'M';
-        }, 3000);
+    // Animate counters when they come into view
+    function animateValue(id, start, end, duration, prefix = '', suffix = '') {
+        const obj = document.getElementById(id);
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            let value = Math.floor(progress * (end - start) + start);
+            
+            if (id === 'tvlValue') {
+                value = (value / 1000).toFixed(1) + 'M';
+            } else if (id === 'usersCount') {
+                value = (value / 1000).toFixed(1) + 'K';
+            } else if (id === 'avgRate') {
+                value = value.toFixed(1) + '%';
+            }
+            
+            obj.textContent = prefix + value + suffix;
+            
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+    
+    // Intersection Observer for animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                if (entry.target.classList.contains('stats-section')) {
+                    animateValue('tvlValue', 0, 1200, 2000, '$');
+                    animateValue('loansCount', 0, 358, 1500);
+                    animateValue('avgRate', 0, 15.8, 1500);
+                    animateValue('usersCount', 0, 2500, 2000);
+                }
+                
+                entry.target.classList.add('animate-fadeInUp');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1
     });
+    
+    // Observe elements for animation
+    document.querySelectorAll('.stats-section, .feature-card, .testimonial-card').forEach(el => {
+        observer.observe(el);
+    });
+    
+    // Show desktop navigation on larger screens
+    if (window.innerWidth >= 768) {
+        document.getElementById('desktop-nav').style.display = 'flex';
+    }
 </script>
 {% endblock %}
