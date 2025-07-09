@@ -51,9 +51,9 @@ pub enum LoanOutcome {
 /// [`LoanOutcomeResult`] struct represents the result of a loan that was confirmed by the borrower.
 ///
 pub struct LoanOutcomeResult {
-    /// Borrower id.
+    /// Lender id.
     ///
-    pub borrower: UserId,
+    pub lender: UserId,
     /// Outcome of the loan.
     ///
     pub outcome: LoanOutcome,
@@ -67,9 +67,9 @@ pub enum LoanStatus {
     /// Loan awaits confirmation from lender.
     ///
     Pending {
-        /// Potential borrowers.
+        /// Potential lender.
         ///
-        potential_lenders: Vec<UserId>,
+        potential_lender: UserId,
     },
     /// Loan is active (in progress).
     ///

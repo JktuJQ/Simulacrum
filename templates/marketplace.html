@@ -2,357 +2,8 @@
 
 {% block title %}Simulacrum - Маркетплейс займов{% endblock %}
 
-{% block extra_head %}
-<style>
-    .marketplace-header {
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        padding: 4rem 0;
-        border-bottom: 1px solid var(--gray-200);
-    }
-    
-    .filter-section {
-        background: white;
-        border-radius: 16px;
-        padding: 2rem;
-        box-shadow: var(--shadow-sm);
-        margin-bottom: 2rem;
-        border: 1px solid var(--gray-200);
-    }
-    
-    .filter-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .search-section {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .loan-card {
-        background: white;
-        border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: var(--shadow-sm);
-        border: 2px solid transparent;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .loan-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary), var(--secondary));
-        transform: scaleX(0);
-        transition: transform 0.3s ease;
-    }
-    
-    .loan-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-xl);
-        border-color: var(--primary);
-    }
-    
-    .loan-card:hover::before {
-        transform: scaleX(1);
-    }
-    
-    .loan-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    
-    .loan-id {
-        color: var(--gray-500);
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-    
-    .loan-status {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    
-    .status-pending {
-        background: rgba(245, 158, 11, 0.1);
-        color: var(--warning);
-    }
-    
-    .status-funded {
-        background: rgba(16, 185, 129, 0.1);
-        color: var(--success);
-    }
-    
-    .loan-amount {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--gray-900);
-        margin-bottom: 0.5rem;
-    }
-    
-    .loan-details {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .detail-item {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .detail-label {
-        font-size: 0.875rem;
-        color: var(--gray-500);
-        margin-bottom: 0.25rem;
-    }
-    
-    .detail-value {
-        font-weight: 600;
-        color: var(--gray-900);
-    }
-    
-    .ltv-section {
-        margin-bottom: 1.5rem;
-    }
-    
-    .ltv-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-    
-    .ltv-value {
-        font-weight: 700;
-        font-size: 1.125rem;
-    }
-    
-    .ltv-indicator {
-        display: flex;
-        align-items: center;
-        font-size: 0.875rem;
-        font-weight: 600;
-    }
-    
-    .ltv-indicator i {
-        margin-right: 0.25rem;
-    }
-    
-    .ltv-safe {
-        color: var(--success);
-    }
-    
-    .ltv-warning {
-        color: var(--warning);
-    }
-    
-    .ltv-danger {
-        color: var(--error);
-    }
-    
-    .ltv-progress {
-        height: 8px;
-        background: var(--gray-200);
-        border-radius: 4px;
-        overflow: hidden;
-    }
-    
-    .ltv-progress-bar {
-        height: 100%;
-        transition: width 0.3s ease;
-    }
-    
-    .ltv-progress-safe {
-        background: var(--success);
-    }
-    
-    .ltv-progress-warning {
-        background: var(--warning);
-    }
-    
-    .ltv-progress-danger {
-        background: var(--error);
-    }
-    
-    .loan-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--gray-200);
-    }
-    
-    .loan-created {
-        font-size: 0.875rem;
-        color: var(--gray-500);
-        display: flex;
-        align-items: center;
-    }
-    
-    .loan-created i {
-        margin-right: 0.5rem;
-    }
-    
-    .fund-button {
-        min-width: 140px;
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: white;
-        border-radius: 16px;
-        box-shadow: var(--shadow-sm);
-    }
-    
-    .empty-icon {
-        font-size: 4rem;
-        color: var(--gray-400);
-        margin-bottom: 1rem;
-    }
-    
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        margin-top: 3rem;
-    }
-    
-    .pagination-button {
-        padding: 0.5rem 1rem;
-        border: 1px solid var(--gray-300);
-        background: white;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    
-    .pagination-button:hover {
-        background: var(--gray-50);
-        border-color: var(--primary);
-    }
-    
-    .pagination-button.active {
-        background: var(--primary);
-        color: white;
-        border-color: var(--primary);
-    }
-    
-    .filter-badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.25rem 0.75rem;
-        background: var(--primary-light);
-        color: var(--primary);
-        border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .filter-badge button {
-        background: none;
-        border: none;
-        color: var(--primary);
-        margin-left: 0.5rem;
-        cursor: pointer;
-        padding: 0;
-        width: 16px;
-        height: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: background 0.2s ease;
-    }
-    
-    .filter-badge button:hover {
-        background: rgba(79, 70, 229, 0.2);
-    }
-    
-    .stats-banner {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white;
-        padding: 2rem;
-        border-radius: 16px;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 2rem;
-        margin-top: 1.5rem;
-    }
-    
-    .stat-item {
-        text-align: center;
-    }
-    
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        line-height: 1.2;
-    }
-    
-    .stat-label {
-        font-size: 0.875rem;
-        opacity: 0.9;
-        margin-top: 0.25rem;
-    }
-
-    .search-section .input-group {
-        align-items: normal;
-    }
-
-    #fundModal1 i {
-        margin-right: 2%;
-    }
-    
-    @media (max-width: 768px) {
-        .marketplace-header {
-            padding: 2rem 0;
-        }
-        
-        .search-section {
-            grid-template-columns: 1fr;
-        }
-        
-        .loan-details {
-            grid-template-columns: 1fr;
-        }
-        
-        .loan-footer {
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-</style>
+{% block css %}
+<link rel="stylesheet" href="/static/css/marketplace.css">
 {% endblock %}
 
 {% block content %}
@@ -562,7 +213,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="flex items-center">
                     <i class="bi bi-info-circle text-success me-2"></i>
@@ -574,22 +225,22 @@
                     </div>
                 </div>
             </div>
-            
+
             <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="flex items-center">
                     <i class="bi bi-exclamation-triangle text-warning me-2"></i>
                     <div style="font-size: 0.875rem; color: var(--gray-700);">
-                        <strong>Внимание:</strong> Инвестиции в займы сопряжены с рисками. 
+                        <strong>Внимание:</strong> Инвестиции в займы сопряжены с рисками.
                         В случае невозврата заем может быть ликвидирован через залог.
                     </div>
                 </div>
             </div>
-            
+
             <div style="border: 1px solid var(--gray-200); padding: 1rem; border-radius: 8px;">
                 <div class="flex items-center">
                     <i class="bi bi-clock me-2"></i>
                     <div style="font-size: 0.875rem;">
-                        <strong>Процесс:</strong> После подтверждения транзакции средства будут переведены заемщику, 
+                        <strong>Процесс:</strong> После подтверждения транзакции средства будут переведены заемщику,
                         а вы получите токены, подтверждающие ваши права на возврат с процентами.
                     </div>
                 </div>
@@ -607,7 +258,6 @@
     </div>
 </div>
 
-<!-- Similar modals for other loans would be here -->
 <div id="fundModal2" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -637,7 +287,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="flex items-center">
                     <i class="bi bi-info-circle text-success me-2"></i>
@@ -649,12 +299,12 @@
                     </div>
                 </div>
             </div>
-            
+
             <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 8px;">
                 <div class="flex items-center">
                     <i class="bi bi-exclamation-triangle text-warning me-2"></i>
                     <div style="font-size: 0.875rem; color: var(--gray-700);">
-                        <strong>Средний риск:</strong> LTV 62% считается умеренным уровнем риска. 
+                        <strong>Средний риск:</strong> LTV 62% считается умеренным уровнем риска.
                         Рекомендуется диверсификация портфеля.
                     </div>
                 </div>
@@ -701,7 +351,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="flex items-center">
                     <i class="bi bi-info-circle text-success me-2"></i>
@@ -713,12 +363,12 @@
                     </div>
                 </div>
             </div>
-            
+
             <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 8px;">
                 <div class="flex items-center">
                     <i class="bi bi-exclamation-triangle-fill text-error me-2"></i>
                     <div style="font-size: 0.875rem; color: var(--gray-700);">
-                        <strong>Высокий риск:</strong> LTV 75% означает повышенный риск ликвидации. 
+                        <strong>Высокий риск:</strong> LTV 75% означает повышенный риск ликвидации.
                         Инвестируйте только ту сумму, которую готовы потерять.
                     </div>
                 </div>
@@ -801,169 +451,6 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-    let activeFilters = {};
-    
-    // Search functionality
-    document.getElementById('searchInput').addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        filterLoans();
-    });
-    
-    // Filter functionality
-    ['amountFilter', 'termFilter', 'rateFilter', 'riskFilter'].forEach(filterId => {
-        document.getElementById(filterId).addEventListener('change', function(e) {
-            const value = e.target.value;
-            const label = e.target.options[e.target.selectedIndex].text;
-            
-            if (value) {
-                activeFilters[filterId] = { value, label };
-            } else {
-                delete activeFilters[filterId];
-            }
-            
-            updateFilterBadges();
-            filterLoans();
-        });
-    });
-    
-    // Sort functionality
-    document.getElementById('sortSelect').addEventListener('change', function(e) {
-        sortLoans(e.target.value);
-    });
-    
-    function updateFilterBadges() {
-        const badgesContainer = document.getElementById('filterBadges');
-        const activeFiltersDiv = document.getElementById('activeFilters');
-        
-        badgesContainer.innerHTML = '';
-        
-        if (Object.keys(activeFilters).length === 0) {
-            activeFiltersDiv.style.display = 'none';
-            return;
-        }
-        
-        activeFiltersDiv.style.display = 'block';
-        
-        Object.keys(activeFilters).forEach(filterId => {
-            const filter = activeFilters[filterId];
-            const badge = document.createElement('span');
-            badge.className = 'filter-badge';
-            badge.innerHTML = `
-                ${filter.label}
-                <button onclick="removeFilter('${filterId}')">
-                    <i class="bi bi-x"></i>
-                </button>
-            `;
-            badgesContainer.appendChild(badge);
-        });
-    }
-    
-    function removeFilter(filterId) {
-        delete activeFilters[filterId];
-        document.getElementById(filterId).value = '';
-        updateFilterBadges();
-        filterLoans();
-    }
-    
-    function filterLoans() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const loanCards = document.querySelectorAll('.loan-card');
-        
-        loanCards.forEach(card => {
-            let showCard = true;
-            
-            // Search filter
-            if (searchTerm) {
-                const cardText = card.textContent.toLowerCase();
-                if (!cardText.includes(searchTerm)) {
-                    showCard = false;
-                }
-            }
-            
-            // Amount filter
-            if (activeFilters.amountFilter) {
-                const amount = parseInt(card.dataset.amount);
-                const filter = activeFilters.amountFilter.value;
-                
-                if (filter === 'small' && amount >= 1000) showCard = false;
-                if (filter === 'medium' && (amount < 1000 || amount > 5000)) showCard = false;
-                if (filter === 'large' && amount <= 5000) showCard = false;
-            }
-            
-            // Rate filter
-            if (activeFilters.rateFilter) {
-                const rate = parseFloat(card.dataset.rate);
-                const filter = activeFilters.rateFilter.value;
-                
-                if (filter === 'low' && rate >= 10) showCard = false;
-                if (filter === 'medium' && (rate < 10 || rate > 20)) showCard = false;
-                if (filter === 'high' && rate <= 20) showCard = false;
-            }
-            
-            // Risk filter
-            if (activeFilters.riskFilter) {
-                const ltv = parseInt(card.dataset.ltv);
-                const filter = activeFilters.riskFilter.value;
-                
-                if (filter === 'low' && ltv > 50) showCard = false;
-                if (filter === 'medium' && (ltv <= 50 || ltv > 70)) showCard = false;
-                if (filter === 'high' && ltv <= 70) showCard = false;
-            }
-            
-            // Term filter
-            if (activeFilters.termFilter) {
-                const term = parseInt(card.dataset.term);
-                const filter = activeFilters.termFilter.value;
-                
-                if (filter === 'short' && term > 30) showCard = false;
-                if (filter === 'medium' && (term <= 30 || term > 90)) showCard = false;
-                if (filter === 'long' && term <= 90) showCard = false;
-            }
-            
-            card.style.display = showCard ? 'block' : 'none';
-        });
-    }
-    
-    function sortLoans(sortBy) {
-        const grid = document.getElementById('loansGrid');
-        const cards = Array.from(grid.querySelectorAll('.loan-card'));
-        
-        cards.sort((a, b) => {
-            switch (sortBy) {
-                case 'rate':
-                    return parseFloat(b.dataset.rate) - parseFloat(a.dataset.rate);
-                case 'amount':
-                    return parseInt(b.dataset.amount) - parseInt(a.dataset.amount);
-                case 'ltv':
-                    return parseInt(a.dataset.ltv) - parseInt(b.dataset.ltv);
-                default: // newest
-                    return 0; // Keep original order
-            }
-        });
-        
-        cards.forEach(card => grid.appendChild(card));
-    }
-    
-    function confirmFunding(loanId) {
-        // In a real application, this would trigger a blockchain transaction
-        alert(`Финансирование займа ${loanId} подтверждено! В реальном приложении здесь будет вызов смарт-контракта.`);
-        
-        // Close modal
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.classList.remove('show');
-        });
-        
-        // Update UI to show loan as funded
-        const loanCard = document.querySelector(`[data-loan-id="${loanId}"]`);
-        if (loanCard) {
-            const statusElement = loanCard.querySelector('.loan-status');
-            if (statusElement) {
-                statusElement.textContent = 'Профинансирован';
-                statusElement.className = 'loan-status status-funded';
-            }
-        }
-    }
-</script>
+{% block js %}
+<script src="/static/js/marketplace.js"></script>
 {% endblock %}

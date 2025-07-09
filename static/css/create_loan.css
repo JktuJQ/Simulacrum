@@ -1,0 +1,365 @@
+.create-loan-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.form-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+    border: 1px solid var(--gray-200);
+}
+
+.form-section h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--gray-900);
+    display: flex;
+    align-items: center;
+}
+
+.form-section h2 i {
+    margin-right: 0.5rem;
+    color: var(--primary);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.calculator-card {
+    background: var(--gray-50);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid var(--gray-200);
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+.calculator-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.calculator-item:last-child {
+    border-bottom: none;
+}
+
+.calculator-label {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+}
+
+.calculator-value {
+    font-weight: 700;
+    color: var(--gray-900);
+}
+
+.ltv-indicator {
+    margin-top: 1rem;
+}
+
+.ltv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.ltv-value {
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.ltv-status {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.ltv-status i {
+    margin-right: 0.25rem;
+}
+
+.ltv-safe {
+    color: var(--success);
+}
+
+.ltv-warning {
+    color: var(--warning);
+}
+
+.ltv-danger {
+    color: var(--error);
+}
+
+.ltv-progress {
+    height: 10px;
+    background: var(--gray-200);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.ltv-progress-bar {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.ltv-progress-safe {
+    background: var(--success);
+}
+
+.ltv-progress-warning {
+    background: var(--warning);
+}
+
+.ltv-progress-danger {
+    background: var(--error);
+}
+
+.info-box {
+    background: rgba(79, 70, 229, 0.05);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 1.5rem;
+}
+
+.info-box-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.info-box i {
+    color: var(--primary);
+    margin-right: 0.75rem;
+    margin-top: 0.125rem;
+}
+
+.info-box-text {
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    line-height: 1.5;
+}
+
+.submit-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+}
+
+.submit-button {
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+}
+
+.submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.submit-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.submit-button:hover::before {
+    left: 100%;
+}
+
+.token-selector {
+    display: flex;
+    border: 2px solid var(--gray-300);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+}
+
+.token-selector:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.token-selector input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: white;
+}
+
+.token-selector select {
+    padding: 0.75rem 1rem;
+    border: none;
+    outline: none;
+    background: var(--gray-100);
+    font-weight: 600;
+    color: var(--gray-700);
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-help {
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    margin-top: 0.5rem;
+}
+
+.validation-message {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    display: none;
+}
+
+.validation-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.validation-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    color: var(--gray-400);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.step.active {
+    color: var(--primary);
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+    background: var(--primary);
+    color: white;
+}
+
+.step-connector {
+    width: 60px;
+    height: 2px;
+    background: var(--gray-200);
+    margin: 0 1rem;
+}
+
+.step.active + .step .step-connector {
+    background: var(--primary);
+}
+
+.warning-box {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.warning-box-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.warning-box i {
+    color: var(--warning);
+    margin-right: 0.75rem;
+    margin-top: 0.125rem;
+}
+
+.warning-box-text {
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .create-loan-header {
+        padding: 2rem 0;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .calculator-card {
+        position: static;
+        margin-top: 2rem;
+    }
+
+    .progress-steps {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .step-connector {
+        width: 2px;
+        height: 60px;
+        margin: 1rem 0;
+    }
+}
