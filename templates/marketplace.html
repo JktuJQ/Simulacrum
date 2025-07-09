@@ -476,13 +476,14 @@
                 </div>
                 <div class="detail-item">
                     <div class="detail-label">К возврату</div>
-                    <div class="detail-value">{{ loan.total_to_repay }}</div>
+                    <div class="detail-value">{{ loan.amount }}</div>
                 </div>
             </div>
             
             <div class="ltv-section">
+                {% if let LoanStatus::Active { ltv, .. } = loan.status %}
                 <div class="ltv-header">
-                    <div class="ltv-value">LTV: {{ loan.ltv }}</div>
+                    <div class="ltv-value">LTV: {{ *ltv }}</div>
                     <div class="ltv-indicator ltv-safe">
                         <i class="bi bi-shield-check"></i>
                         Безопасно
@@ -491,6 +492,7 @@
                 <div class="ltv-progress">
                     <div class="ltv-progress-bar ltv-progress-safe" style="width: 45%"></div>
                 </div>
+                {% endif %}
             </div>
             
             <div class="loan-footer">

@@ -4,9 +4,13 @@
 use axum::response::Html;
 use askama::Template;
 use chrono::{TimeDelta, TimeZone, Utc};
-use crate::models::{Page, LoanId, Percent, USDC, ETH, LoanStatus, Loan};
+
+use crate::db::UserId;
+use super::Page;
+use crate::models::{common::Percent, market::{LoanId, USDC, ETH, LoanStatus, Loan, Wallet}};
 
 /// [`MarketplaceTemplate`] is a template for rendering marketplace page.
+///
 #[derive(Template)]
 #[template(path = "marketplace.html")]
 pub struct MarketplaceTemplate {
@@ -34,39 +38,36 @@ pub async fn marketplace_route() -> Html<String> {
     let template = MarketplaceTemplate::new(vec![
         Loan {
             id: LoanId(0),
+            created_at: Utc.with_ymd_and_hms(2025, 7, 8, 14, 26, 10).single().unwrap(),
+            lender: UserId(0),
+            wallet: Wallet,
+            status: LoanStatus::Awaiting,
             amount: USDC(1000.0),
+            collateral: ETH(0.5),
             rate: Percent(12.5),
             term: TimeDelta::days(30),
-            collateral: ETH(0.5),
-            ltv: Percent(45.0),
-            status: LoanStatus::InProgress,
-            created_at: Utc.with_ymd_and_hms(2025, 7, 8, 14, 26, 10).single().unwrap(),
-            remaining: TimeDelta::days(10),
-            total_to_repay: USDC(200.0)
         },
         Loan {
             id: LoanId(1),
+            created_at: Utc.with_ymd_and_hms(2025, 7, 8, 11, 26, 10).single().unwrap(),
+            lender: UserId(1),
+            wallet: Wallet,
+            status: LoanStatus::Awaiting,
             amount: USDC(2500.0),
+            collateral: ETH(1.2),
             rate: Percent(15.0),
             term: TimeDelta::days(60),
-            collateral: ETH(1.2),
-            ltv: Percent(65.0),
-            status: LoanStatus::InProgress,
-            created_at: Utc.with_ymd_and_hms(2025, 7, 8, 11, 26, 10).single().unwrap(),
-            remaining: TimeDelta::days(10),
-            total_to_repay: USDC(200.0)
         },
         Loan {
             id: LoanId(2),
-            amount: USDC(5000.0),
-            rate: Percent(18.0),
-            term: TimeDelta::days(90),
-            collateral: ETH(2.0),
-            ltv: Percent(75.0),
-            status: LoanStatus::InProgress,
             created_at: Utc.with_ymd_and_hms(2025, 7, 7, 11, 26, 10).single().unwrap(),
-            remaining: TimeDelta::days(10),
-            total_to_repay: USDC(200.0)
+            lender: UserId(2),
+            wallet: Wallet,
+            status: LoanStatus::Awaiting,
+            amount: USDC(5000.0),
+            collateral: ETH(2.0),
+            rate: Percent(18.0),
+            term: Default::default(),
         },
     ]);
 
