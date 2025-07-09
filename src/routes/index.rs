@@ -1,9 +1,9 @@
 //! Templates, forms and views for index page.
 //!
 
-use axum::response::Html;
-use askama::Template;
 use super::Page;
+use askama::Template;
+use axum::response::Html;
 
 /// [`IndexTemplate`] is a template for rendering index page.
 ///
@@ -19,7 +19,7 @@ impl IndexTemplate {
     ///
     pub fn new() -> IndexTemplate {
         IndexTemplate {
-            active_page: Page::Home
+            active_page: Page::Home,
         }
     }
 }
@@ -33,5 +33,9 @@ impl Default for IndexTemplate {
 ///
 pub async fn index_route() -> Html<String> {
     let template = IndexTemplate::new();
-    Html(template.render().expect("This template uses sample data and so rendering cannot fail."))
+    Html(
+        template
+            .render()
+            .expect("This template uses sample data and so rendering cannot fail."),
+    )
 }

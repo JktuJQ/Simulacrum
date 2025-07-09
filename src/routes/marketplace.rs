@@ -1,13 +1,16 @@
 //! Templates, forms and views for marketplace page.
 //!
 
-use axum::response::Html;
 use askama::Template;
+use axum::response::Html;
 use chrono::{TimeDelta, TimeZone, Utc};
 
-use crate::db::UserId;
 use super::Page;
-use crate::models::{common::Percent, market::{LoanId, USDC, ETH, LoanStatus, Loan, Wallet}};
+use crate::{
+    blockchain::{Wallet, ETH, USDC},
+    db::{User, UserId},
+    models::{Loan, LoanId, LoanStatus, Percent},
+};
 
 /// [`MarketplaceTemplate`] is a template for rendering marketplace page.
 ///
@@ -38,9 +41,15 @@ pub async fn marketplace_route() -> Html<String> {
     let template = MarketplaceTemplate::new(vec![
         Loan {
             id: LoanId(0),
-            created_at: Utc.with_ymd_and_hms(2025, 7, 8, 14, 26, 10).single().unwrap(),
-            lender: UserId(0),
-            wallet: Wallet,
+            created_at: Utc
+                .with_ymd_and_hms(2025, 7, 8, 14, 26, 10)
+                .single()
+                .unwrap(),
+            borrower: User {
+                id: UserId(0),
+                stable_wallet: Wallet::new("USDC".to_string()).unwrap(),
+                unstable_wallet: Wallet::new("ETH".to_string()).unwrap(),
+            },
             status: LoanStatus::Awaiting,
             amount: USDC(1000.0),
             collateral: ETH(0.5),
@@ -49,9 +58,15 @@ pub async fn marketplace_route() -> Html<String> {
         },
         Loan {
             id: LoanId(1),
-            created_at: Utc.with_ymd_and_hms(2025, 7, 8, 11, 26, 10).single().unwrap(),
-            lender: UserId(1),
-            wallet: Wallet,
+            created_at: Utc
+                .with_ymd_and_hms(2025, 7, 8, 11, 26, 10)
+                .single()
+                .unwrap(),
+            borrower: User {
+                id: UserId(1),
+                stable_wallet: Wallet::new("USDC".to_string()).unwrap(),
+                unstable_wallet: Wallet::new("ETH".to_string()).unwrap(),
+            },
             status: LoanStatus::Awaiting,
             amount: USDC(2500.0),
             collateral: ETH(1.2),
@@ -60,9 +75,15 @@ pub async fn marketplace_route() -> Html<String> {
         },
         Loan {
             id: LoanId(2),
-            created_at: Utc.with_ymd_and_hms(2025, 7, 7, 11, 26, 10).single().unwrap(),
-            lender: UserId(2),
-            wallet: Wallet,
+            created_at: Utc
+                .with_ymd_and_hms(2025, 7, 7, 11, 26, 10)
+                .single()
+                .unwrap(),
+            borrower: User {
+                id: UserId(2),
+                stable_wallet: Wallet::new("USDC".to_string()).unwrap(),
+                unstable_wallet: Wallet::new("ETH".to_string()).unwrap(),
+            },
             status: LoanStatus::Awaiting,
             amount: USDC(5000.0),
             collateral: ETH(2.0),
@@ -71,5 +92,9 @@ pub async fn marketplace_route() -> Html<String> {
         },
     ]);
 
-    Html(template.render().expect("This template uses sample data and so rendering cannot fail."))
+    Html(
+        template
+            .render()
+            .expect("This template uses sample data and so rendering cannot fail."),
+    )
 }

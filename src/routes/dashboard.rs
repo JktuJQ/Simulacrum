@@ -1,7 +1,6 @@
-use axum::response::Html;
-use askama::Template;
 use super::Page;
-
+use askama::Template;
+use axum::response::Html;
 
 /// [`DashboardTemplate`] is a template for rendering dashboard page.
 ///
@@ -26,6 +25,10 @@ impl DashboardTemplate {
 ///
 pub async fn dashboard_route() -> Html<String> {
     let template = DashboardTemplate::new();
-    
-    Html(template.render().expect("This template is empty and so rendering cannot fail."))
+
+    Html(
+        template
+            .render()
+            .expect("This template is empty and so rendering cannot fail."),
+    )
 }

@@ -1,9 +1,8 @@
 //! Templates, forms and views for create loan page.
-///!
-
-use axum::response::Html;
-use askama::Template;
 use super::Page;
+use askama::Template;
+///!
+use axum::response::Html;
 
 /// [`CreateLoanTemplate`] is a template for page that allows creating loans.
 ///
@@ -19,7 +18,7 @@ impl CreateLoanTemplate {
     ///
     pub fn new() -> CreateLoanTemplate {
         CreateLoanTemplate {
-            active_page: Page::CreateLoan
+            active_page: Page::CreateLoan,
         }
     }
 }
@@ -33,5 +32,9 @@ impl Default for CreateLoanTemplate {
 ///
 pub async fn create_loan_route() -> Html<String> {
     let template = CreateLoanTemplate::new();
-    Html(template.render().expect("This template uses sample data and so rendering cannot fail."))
+    Html(
+        template
+            .render()
+            .expect("This template uses sample data and so rendering cannot fail."),
+    )
 }

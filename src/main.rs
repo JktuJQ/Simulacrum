@@ -5,12 +5,15 @@
 //! between users without intermediaries.
 //!
 
-use axum::{routing::get, extract::FromRef, Router};
+use axum::{extract::FromRef, routing::get, Router};
 use tower_http::services::ServeDir;
 
-use sqlx::PgPool;
 use crate::db::DB;
+use sqlx::PgPool;
 
+use crate::blockchain::Provider;
+
+mod blockchain;
 mod db;
 mod models;
 mod routes;
@@ -23,9 +26,12 @@ mod routes;
 ///
 #[derive(Clone, Debug)]
 pub struct AppState {
+    /// Blockchain network provider.
+    ///
+    pub provider: Provider,
     /// Application's database.
     ///
-    pub db: DB
+    pub db: DB,
 }
 impl FromRef<AppState> for DB {
     fn from_ref(input: &AppState) -> Self {
@@ -36,17 +42,17 @@ impl FromRef<AppState> for DB {
 /// Entry point for program.
 ///
 #[shuttle_runtime::main]
-pub async fn main(
-    #[shuttle_shared_db::Postgres] pool: PgPool
-) -> shuttle_axum::ShuttleAxum {
-    let state = AppState { db: DB(pool) };
+pub async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::ShuttleAxum {
     let router = Router::new()
         .route("/", get(routes::index_route))
         .route("/marketplace", get(routes::marketplace_route))
         .route("/create-loan", get(routes::create_loan_route))
         .route("/dashboard", get(routes::dashboard_route))
         .nest_service("/static", ServeDir::new("static"))
-        .with_state(state);
+        .with_state(AppState {
+            provider: Provider::new().await,
+            db: DB(pool),
+        });
 
     Ok(router.into())
 }
