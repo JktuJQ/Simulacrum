@@ -5,10 +5,10 @@
 //! between users without intermediaries.
 //!
 
-use axum::{extract::FromRef, routing::get, Router};
+use axum::{extract::FromRef, routing::get, Router, middleware};
 use tower_http::services::ServeDir;
 
-use crate::db::DB;
+use crate::{db::DB, auth::authorize};
 use sqlx::PgPool;
 
 use crate::blockchain::Provider;
@@ -17,6 +17,7 @@ mod blockchain;
 mod db;
 mod models;
 mod routes;
+mod auth;
 
 /// [`AppState`] struct represents the global state of the whole website app.
 ///
@@ -28,7 +29,7 @@ mod routes;
 pub struct AppState {
     /// Blockchain network provider.
     ///
-    pub provider: Provider,
+    // pub provider: Provider,
     /// Application's database.
     ///
     pub db: DB,
@@ -47,10 +48,10 @@ pub async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::
         .route("/", get(routes::index_route))
         .route("/marketplace", get(routes::marketplace_route))
         .route("/create-loan", get(routes::create_loan_route))
-        .route("/dashboard", get(routes::dashboard_route))
+        .route("/dashboard", get(routes::dashboard_route).layer(middleware::from_fn(auth::authorize)))
         .nest_service("/static", ServeDir::new("static"))
         .with_state(AppState {
-            provider: Provider::new().await,
+            // provider: Provider::new().await,
             db: DB(pool),
         });
 
