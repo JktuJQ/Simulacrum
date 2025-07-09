@@ -1,3 +1,4 @@
+use crate::blockchain::{Wallet, ETH, USDC};
 use sqlx::{FromRow, PgPool};
 use std::num::TryFromIntError;
 
@@ -18,4 +19,11 @@ impl TryFrom<i64> for UserId {
     fn try_from(value: i64) -> Result<Self, Self::Error> {
         Ok(UserId(u64::try_from(value)?))
     }
+}
+
+#[derive(FromRow)]
+pub struct User {
+    pub id: UserId,
+    pub stable_wallet: Wallet<USDC>,
+    pub unstable_wallet: Wallet<ETH>,
 }
