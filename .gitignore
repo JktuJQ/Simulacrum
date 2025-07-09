@@ -5,6 +5,9 @@
 # Rust
 /target
 
+# .env
+*.env
+
 # shuttle-rs
 /.shuttle*
 /Secrets*.toml

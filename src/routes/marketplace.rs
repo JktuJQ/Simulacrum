@@ -7,7 +7,7 @@ use chrono::{TimeDelta, TimeZone, Utc};
 
 use super::Page;
 use crate::{
-    blockchain::{Wallet, ETH, USDC},
+    blockchain::{WalletAddress, ETH, USDC},
     db::{User, UserId},
     models::{Loan, LoanId, LoanStatus, Percent},
 };
@@ -46,15 +46,11 @@ pub async fn marketplace_route() -> Html<String> {
                 .single()
                 .unwrap(),
             borrower: User {
-                id: UserId(0),
-                stable_wallet: Wallet::new(
+                address: WalletAddress::try_from(
                     "0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string(),
                 )
                 .unwrap(),
-                unstable_wallet: Wallet::new(
-                    "0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string(),
-                )
-                .unwrap(),
+                nonce: "nonce".to_string(),
             },
             status: LoanStatus::Awaiting,
             amount: USDC(1000.0),
@@ -69,15 +65,11 @@ pub async fn marketplace_route() -> Html<String> {
                 .single()
                 .unwrap(),
             borrower: User {
-                id: UserId(1),
-                stable_wallet: Wallet::new(
+                address: WalletAddress::try_from(
                     "0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string(),
                 )
                 .unwrap(),
-                unstable_wallet: Wallet::new(
-                    "0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string(),
-                )
-                .unwrap(),
+                nonce: "nonce".to_string(),
             },
             status: LoanStatus::Awaiting,
             amount: USDC(2500.0),
@@ -92,15 +84,11 @@ pub async fn marketplace_route() -> Html<String> {
                 .single()
                 .unwrap(),
             borrower: User {
-                id: UserId(2),
-                stable_wallet: Wallet::new(
+                address: WalletAddress::try_from(
                     "0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string(),
                 )
                 .unwrap(),
-                unstable_wallet: Wallet::new(
-                    "0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string(),
-                )
-                .unwrap(),
+                nonce: "nonce".to_string(),
             },
             status: LoanStatus::Awaiting,
             amount: USDC(5000.0),

@@ -1,23 +1,23 @@
-//! Simulacrum
+//! # Simulacrum
 //!
 //! `Simulacrum` is a decentralized peer lending platform
 //! that will simplify the process of issuing and receiving loans
 //! between users without intermediaries.
 //!
 
-use axum::{extract::FromRef, routing::get, Router, middleware};
+use axum::{extract::FromRef, middleware, routing::get, Router};
 use tower_http::services::ServeDir;
 
-use crate::{db::DB, auth::authorize};
+use crate::{auth::authorize, db::DB};
 use sqlx::PgPool;
 
 use crate::blockchain::Provider;
 
+mod auth;
 mod blockchain;
 mod db;
 mod models;
 mod routes;
-mod auth;
 
 /// [`AppState`] struct represents the global state of the whole website app.
 ///
@@ -48,16 +48,27 @@ pub async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::
         .run(&pool)
         .await
         .expect("Migrations should not fail");
-    dbg!("Migration check", sqlx::query!("SELECT * FROM users").fetch_all(&pool).await.unwrap());
+    dbg!(
+        "Migration check",
+        sqlx::query_as!(db::User, "SELECT * FROM users")
+            .fetch_all(&pool)
+            .await
+            .unwrap()
+    );
 
     let router = Router::new()
         .route("/", get(routes::index_route))
         .route("/marketplace", get(routes::marketplace_route))
         .route("/create-loan", get(routes::create_loan_route))
-        .route("/dashboard", get(routes::dashboard_route).layer(middleware::from_fn(auth::authorize)))
+        .route(
+            "/dashboard",
+            get(routes::dashboard_route).layer(middleware::from_fn(auth::authorize)),
+        )
         .nest_service("/static", ServeDir::new("static"))
         .with_state(AppState {
-            provider: Provider::new().await,
+            provider: Provider::new()
+                .await
+                .expect("Provider should be available."),
             db: DB(pool),
         });
 

@@ -1,4 +1,6 @@
-use crate::blockchain::{Wallet, ETH, USDC};
+//!
+
+use crate::blockchain::WalletAddress;
 use sqlx::{FromRow, PgPool};
 use std::num::TryFromIntError;
 
@@ -21,9 +23,15 @@ impl TryFrom<i64> for UserId {
     }
 }
 
-#[derive(FromRow)]
+/// [`User`] struct models `users` table from database.
+///
+#[derive(Clone, Debug, FromRow)]
 pub struct User {
-    pub id: UserId,
-    pub stable_wallet: Wallet<USDC>,
-    pub unstable_wallet: Wallet<ETH>,
+    /// Connected wallet address.
+    ///
+    #[sqlx(try_from = "String")]
+    pub address: WalletAddress,
+    /// Nonce is a crypto-random string that is needed for user validation.
+    ///
+    pub nonce: String,
 }
