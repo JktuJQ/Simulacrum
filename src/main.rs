@@ -29,7 +29,7 @@ mod auth;
 pub struct AppState {
     /// Blockchain network provider.
     ///
-    // pub provider: Provider,
+    pub provider: Provider,
     /// Application's database.
     ///
     pub db: DB,
@@ -57,7 +57,7 @@ pub async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::
         .route("/dashboard", get(routes::dashboard_route).layer(middleware::from_fn(auth::authorize)))
         .nest_service("/static", ServeDir::new("static"))
         .with_state(AppState {
-            // provider: Provider::new().await,
+            provider: Provider::new().await,
             db: DB(pool),
         });
 
