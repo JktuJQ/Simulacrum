@@ -44,6 +44,12 @@ impl FromRef<AppState> for DB {
 ///
 #[shuttle_runtime::main]
 pub async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::ShuttleAxum {
+    sqlx::migrate!()
+        .run(&pool)
+        .await
+        .expect("Migrations should not fail");
+    dbg!("Migration check", sqlx::query!("SELECT * FROM users").fetch_all(&pool).await.unwrap());
+
     let router = Router::new()
         .route("/", get(routes::index_route))
         .route("/marketplace", get(routes::marketplace_route))

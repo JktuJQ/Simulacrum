@@ -18,7 +18,7 @@ pub struct Provider(
     >,
 );
 impl Provider {
-    pub const PROVIDER_URL: &'static str = "";
+    pub const PROVIDER_URL: &'static str = "https://reth-ethereum.ithaca.xyz/rpc";
 
     pub async fn new() -> Provider {
         Provider(

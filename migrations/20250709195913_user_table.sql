@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS users (
+    address VARCHAR(42) PRIMARY KEY,
+    nonce TEXT UNIQUE NOT NULL
+);
