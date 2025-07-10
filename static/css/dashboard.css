@@ -295,6 +295,10 @@
     color: var(--gray-400);
 }
 
+.stats-banner {
+    background: linear-gradient(135deg, #6e45e2 0%, #89d4cf 100%);
+}
+
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

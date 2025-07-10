@@ -257,7 +257,7 @@
 }
 
 .stats-banner {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, #6e45e2 0%, #89d4cf 100%);
     color: white;
     padding: 2rem;
     border-radius: 16px;
