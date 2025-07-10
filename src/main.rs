@@ -5,73 +5,22 @@
 //! between users without intermediaries.
 //!
 
-use axum::{extract::FromRef, middleware, routing::{get, post}, Router};
+use axum::{routing::get, Router};
 use tower_http::services::ServeDir;
 
-use crate::{auth::authorize, db::DB};
-use sqlx::PgPool;
-
-use crate::blockchain::Provider;
-
-mod auth;
 mod blockchain;
-mod db;
 mod models;
 mod routes;
-
-/// [`AppState`] struct represents the global state of the whole website app.
-///
-/// Currently, it only has database as the global state.
-///
-/// Through the `FromRef` trait, it supports conversions to inner DB handler.
-///
-#[derive(Clone, Debug)]
-pub struct AppState {
-    /// Blockchain network provider.
-    ///
-    pub provider: Provider,
-    /// Application's database.
-    ///
-    pub db: DB,
-}
-impl FromRef<AppState> for DB {
-    fn from_ref(input: &AppState) -> Self {
-        input.db.clone()
-    }
-}
 
 /// Entry point for program.
 ///
 #[shuttle_runtime::main]
-pub async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::ShuttleAxum {
-    sqlx::migrate!()
-        .run(&pool)
-        .await
-        .expect("Migrations should not fail");
-    dbg!(
-        "Migration check",
-        sqlx::query_as!(db::User, "SELECT * FROM users")
-            .fetch_all(&pool)
-            .await
-            .unwrap()
-    );
-
+pub async fn main() -> shuttle_axum::ShuttleAxum {
     let router = Router::new()
         .route("/", get(routes::index_route))
         .route("/marketplace", get(routes::marketplace_route))
         .route("/create-loan", get(routes::create_loan_route))
-        .route(
-            "/dashboard",
-            get(routes::dashboard_route).layer(middleware::from_fn(auth::authorize)),
-        )
-        .route("/register", post(auth::register))
-        .nest_service("/static", ServeDir::new("static"))
-        .with_state(AppState {
-            provider: Provider::new()
-                .await
-                .expect("Provider should be available."),
-            db: DB(pool),
-        });
-
+        .route("/dashboard", get(routes::dashboard_route))
+        .nest_service("/static", ServeDir::new("static"));
     Ok(router.into())
 }

@@ -8,7 +8,6 @@ use chrono::{TimeDelta, TimeZone, Utc};
 use super::Page;
 use crate::{
     blockchain::{WalletAddress, ETH, USDC},
-    db::{User, UserId},
     models::{Loan, LoanId, LoanStatus, Percent},
 };
 
@@ -45,13 +44,7 @@ pub async fn marketplace_route() -> Html<String> {
                 .with_ymd_and_hms(2025, 7, 8, 14, 26, 10)
                 .single()
                 .unwrap(),
-            borrower: User {
-                address: WalletAddress::try_from(
-                    "0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string(),
-                )
-                .unwrap(),
-                nonce: "nonce".to_string(),
-            },
+            borrower: WalletAddress("0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string()),
             status: LoanStatus::Awaiting,
             amount: USDC(1000.0),
             collateral: ETH(0.5),
@@ -64,13 +57,7 @@ pub async fn marketplace_route() -> Html<String> {
                 .with_ymd_and_hms(2025, 7, 8, 11, 26, 10)
                 .single()
                 .unwrap(),
-            borrower: User {
-                address: WalletAddress::try_from(
-                    "0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string(),
-                )
-                .unwrap(),
-                nonce: "nonce".to_string(),
-            },
+            borrower: WalletAddress("0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string()),
             status: LoanStatus::Awaiting,
             amount: USDC(2500.0),
             collateral: ETH(1.2),
@@ -83,13 +70,7 @@ pub async fn marketplace_route() -> Html<String> {
                 .with_ymd_and_hms(2025, 7, 7, 11, 26, 10)
                 .single()
                 .unwrap(),
-            borrower: User {
-                address: WalletAddress::try_from(
-                    "0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string(),
-                )
-                .unwrap(),
-                nonce: "nonce".to_string(),
-            },
+            borrower: WalletAddress("0x769673C05EaA76d8B3669fb2D0aEDFD6EE34C4Da".to_string()),
             status: LoanStatus::Awaiting,
             amount: USDC(5000.0),
             collateral: ETH(2.0),

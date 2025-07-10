@@ -1,8 +1,7 @@
 //! `models` module provides models that represent data that backend operates with.
 //!
 
-use crate::blockchain::{ETH, USDC};
-use crate::db::{User, UserId};
+use crate::blockchain::{WalletAddress, ETH, USDC};
 use chrono::{DateTime, TimeDelta, Utc};
 use std::fmt;
 
@@ -53,7 +52,7 @@ pub enum LoanOutcome {
 pub struct LoanOutcomeResult {
     /// Lender id.
     ///
-    pub lender: UserId,
+    pub lender: WalletAddress,
     /// Outcome of the loan.
     ///
     pub outcome: LoanOutcome,
@@ -69,14 +68,14 @@ pub enum LoanStatus {
     Pending {
         /// Potential lender.
         ///
-        potential_lender: UserId,
+        potential_lender: WalletAddress,
     },
     /// Loan is active (in progress).
     ///
     Active {
-        /// Lender user.
+        /// Lender address.
         ///
-        lender: User,
+        lender: WalletAddress,
         /// Loan is active since this time.
         ///
         started_at: DateTime<Utc>,
@@ -111,9 +110,9 @@ pub struct Loan {
     /// Datetime at which loan was created.
     ///
     pub created_at: DateTime<Utc>,
-    /// Borrower user.
+    /// Borrower address.
     ///
-    pub borrower: User,
+    pub borrower: WalletAddress,
     /// Status of the loan.
     ///
     pub status: LoanStatus,
