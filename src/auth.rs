@@ -1,14 +1,20 @@
 use axum::{
     body::Body,
-    extract::{Json, Request},
-    http::{self, Response, StatusCode},
+    extract::{Json, Request, State},
+    http::{self, header, Response, StatusCode},
     middleware::Next,
     response::IntoResponse,
 };
+use std::sync::Arc;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use cookie::Cookie;
+
+use rand::{distr::Alphanumeric, Rng};
+
+use crate::AppState;
 
 #[derive(Serialize, Deserialize)]
 struct UserResponse {
@@ -90,4 +96,68 @@ pub async fn authorize(mut req: Request, next: Next) -> Result<Response<Body>, A
         }
     };
     Ok(next.run(req).await)
+}
+
+fn generate_nonce_string(length: usize) -> String {
+    rand::rng()
+        .sample_iter(&Alphanumeric)
+        .take(length)
+        .map(char::from)
+        .collect()
+}
+
+pub async fn register(
+    State(data): State<AppState>,
+    address: String
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let user_exists: Option<bool> =
+        sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM users WHERE address = $1)")
+            .bind(address.to_ascii_lowercase())
+            .fetch_one(&data.db.0)
+            .await
+            .map_err(|e| {
+                let error_response = serde_json::json!({
+                    "status": "fail",
+                    "message": format!("Database error: {}", e),
+                });
+                (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+            })?;
+
+    if let Some(exists) = user_exists {
+        if exists {
+            let error_response = serde_json::json!({
+                "status": "fail",
+                "message": "User with that address already exists",
+            });
+            return Err((StatusCode::CONFLICT, Json(error_response)));
+        }
+    }
+
+    let nonce = generate_nonce_string(64);
+    // let user = sqlx::query!(
+    //     "INSERT INTO users (address, nonce) VALUES ($1, $2) RETURNING *",
+    //     address,
+    //     nonce,
+    // )
+    // .execute(&data.db.0)
+    // .await
+    // .map_err(|e| {
+    //     let error_response = serde_json::json!({
+    //         "status": "fail",
+    //         "message": format!("Database error: {}", e),
+    //     });
+    //     (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+    // })?;
+
+    let cookie = Cookie::build(("nonce", nonce))
+    .domain("localhost")
+    .path("/")
+    .secure(true)
+    .http_only(true);
+
+    let mut response = Response::new(json!({"status": "success"}).to_string());
+    response
+        .headers_mut()
+        .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
+    Ok(response)
 }

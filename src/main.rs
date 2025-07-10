@@ -5,7 +5,7 @@
 //! between users without intermediaries.
 //!
 
-use axum::{extract::FromRef, middleware, routing::get, Router};
+use axum::{extract::FromRef, middleware, routing::{get, post}, Router};
 use tower_http::services::ServeDir;
 
 use crate::{auth::authorize, db::DB};
@@ -64,6 +64,7 @@ pub async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::
             "/dashboard",
             get(routes::dashboard_route).layer(middleware::from_fn(auth::authorize)),
         )
+        .route("/register", post(auth::register))
         .nest_service("/static", ServeDir::new("static"))
         .with_state(AppState {
             provider: Provider::new()

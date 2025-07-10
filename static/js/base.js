@@ -9,23 +9,46 @@ window.addEventListener('scroll', function() {
 
 walletConnected = false;
 const walletButton = document.getElementById('walletButton');
-const walletText = document.getElementById('walletText');
 
-walletButton.addEventListener('click', function() {
-    if (!walletConnected) {
-        walletConnected = true;
-        walletText.textContent = '0x1234...5678';
-        walletButton.classList.remove('btn-primary');
-        walletButton.classList.add('btn-secondary');
+walletButton.addEventListener('click', async () => {
+    if (!walletConnected && window.ethereum) {
+        try {
+            walletButton.classList.remove('btn-primary');
+            walletButton.classList.add('btn-secondary');
+            walletButton.disabled = true;
+            const web3 = new Web3(window.ethereum);
+            // request accounts from MetaMask
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            // get list of accounts
+            const accounts = await web3.eth.getAccounts();
+            // get the first account and populate placeholder
+            let address = accounts[0]
 
-        console.log('Connecting to wallet...');
-    } else {
-        walletConnected = false;
-        walletText.textContent = 'Подключить кошелек';
-        walletButton.classList.remove('btn-secondary');
-        walletButton.classList.add('btn-primary');
+            let get_token = await fetch("http://localhost:8000/register", {
+                method: "POST",
+                body: address,
+                headers: {
+                    "Content-type": "raw; charset=UTF-8"
+                }
+            });
 
-        console.log('Disconnecting wallet...');
+            console.log(get_token);
+
+            walletButton.innerText = address;
+            walletConnected = true;
+        } catch (err) {
+            walletButton.classList.remove('btn-secondary');
+            walletButton.classList.add('btn-primary');
+        }
+        walletButton.disabled = false;
+    } else if (walletConnected) {
+        
+    }
+    else {
+        // no Ethereum provider - instruct user to install MetaMask
+        document.getElementById('warn').innerHTML =
+            "Please <a href='https://metamask.io/download/'>install MetaMask</a>.";
+        document.getElementById('requestAccounts').disabled = true;
     }
 });
 

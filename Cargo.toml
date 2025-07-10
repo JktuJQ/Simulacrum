@@ -31,3 +31,6 @@ alloy = { version = "0.14.0", features = ["full"] }
 shuttle-runtime = { version = "0.53.0" }
 shuttle-axum = { version = "0.53.0" }
 shuttle-shared-db = { version = "0.53.0", features = ["postgres", "sqlx"] }
+uuid = "1.17.0"
+rand = "0.9.1"
+cookie = "0.18.1"
