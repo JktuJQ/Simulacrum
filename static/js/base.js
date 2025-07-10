@@ -7,28 +7,6 @@ window.addEventListener('scroll', function() {
     }
 });
 
-
-function setCookie(name,value,days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-}
-
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-
 function walletButtonToggle() {
     if ('btn-primary' in walletButton.classList) {
         walletButton.classList.remove('btn-primary');
@@ -42,16 +20,9 @@ function walletButtonToggle() {
 }
 
 async function isWalletConnected() {
-    walletConnected = getCookie('walletConnected');
-    if (walletConnected) {
-        try {
-            await auth_metamask();
-            return true;
-        } catch {
-            setCookie('walletConnected', false, 100);
-        }
-        return false;
-    }
+    let accounts = await window.ethereum.request({ method: 'eth_accounts' })
+    return !(accounts === undefined || accounts.length === 0)
+    
 }
 
 async function auth_metamask() {
@@ -81,17 +52,16 @@ async function connectWallet(walletButton) {
         let address = accounts[0]
 
         walletButton.innerText = address;
-        setCookie('walletConnected', true, 5);
+
+        // if (window.location.href === "http://localhost:8000/dashboard") { // if logged in on dashboard -> reload
+        //     window.location.reload();
+        // }
+
     } catch (err) {
         console.log(err);
     }
     walletButtonToggle(walletButton);
 }
-
-
-walletButton.addEventListener('click', async () => {
-    
-});
 
 const mobileMenuButton = document.getElementById('mobile-menu-button');
 const desktopNav = document.getElementById('desktop-nav');
@@ -121,4 +91,26 @@ window.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal')) {
         event.target.classList.remove('show');
     }
+});
+
+window.ethereum.on('accountsChanged', async () => {
+    window.location.reload();
+});
+
+document.addEventListener('DOMContentLoaded', async function() {
+    let walletConnected = await isWalletConnected();
+
+    let walletButton = document.querySelector('#walletButton #walletText');
+    if (walletConnected) {
+        walletButton.innerText = 'Подключено';
+    } else {
+        walletButton.innerText = 'Подключить кошелек';
+    }
+    // const lastTab = localStorage.getItem('lastDashboardTab');
+    // if (lastTab && walletConnected) {
+    //     const tabButton = document.querySelector(`[onclick="showTab('${lastTab}')"]`);
+    //     if (tabButton) {
+    //         tabButton.click();
+    //     }
+    // }
 });
