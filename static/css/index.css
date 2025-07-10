@@ -1,7 +1,5 @@
 .hero-section {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-
-    /* background: linear-gradient(135deg, #6e45e2 0%, #89d4cf 100%); */
+    background: linear-gradient(135deg, #6e45e2 0%, #89d4cf 100%);
     color: white;
     padding: 6rem 0;
     position: relative;
@@ -9,7 +7,7 @@
 }
 
 .cta-section {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    background: linear-gradient(135deg, #6e45e2 0%, #89d4cf 100%);
     color: white;
     padding: 6rem 0;
     text-align: center;
@@ -22,7 +20,7 @@
     right: -50%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    /*background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);*/
     animation: float 20s ease-in-out infinite;
 }
 
@@ -40,6 +38,38 @@
 
 .hero-image:hover {
     transform: perspective(1000px) rotateY(0deg);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.2) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.btn-secondary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn-secondary:hover::after {
+    opacity: 1;
 }
 
 .feature-grid {
@@ -206,6 +236,12 @@
 .step-card {
     text-align: center;
     position: relative;
+    background: white;
+    padding: 2rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
 }
 
 .step-number {
@@ -213,6 +249,7 @@
     height: 60px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -220,21 +257,6 @@
     color: white;
     font-size: 1.5rem;
     font-weight: 700;
-}
-
-.step-connector {
-    position: absolute;
-    top: 30px;
-    left: 50%;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    transform: translateX(-50%);
-    z-index: -1;
-}
-
-.step-card:last-child .step-connector {
-    display: none;
 }
 
 @media (max-width: 768px) {

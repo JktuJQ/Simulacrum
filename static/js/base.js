@@ -38,7 +38,7 @@ walletButton.addEventListener('click', async () => {
             walletConnected = true;
         } catch (err) {
             walletButton.classList.remove('btn-secondary');
-            walletButton.classList.add('btn-primary');
+            //walletButton.classList.add('btn-primary');
         }
         walletButton.disabled = false;
     } else if (walletConnected) {

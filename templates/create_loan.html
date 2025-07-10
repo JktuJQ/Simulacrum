@@ -53,10 +53,8 @@
                                    min="100"
                                    max="100000"
                                    step="100">
-                            <select id="loanToken">
+                            <select id="loanToken" disabled>
                                 <option value="USDC">USDC</option>
-                                <option value="USDT">USDT</option>
-                                <option value="DAI">DAI</option>
                             </select>
                         </div>
                         <div class="form-help">
@@ -123,10 +121,8 @@
                                    min="0.01"
                                    max="100"
                                    step="0.01">
-                            <select id="collateralToken">
+                            <select id="collateralToken" disabled>
                                 <option value="ETH">ETH</option>
-                                <option value="BTC">BTC</option>
-                                <option value="BNB">BNB</option>
                             </select>
                         </div>
                         <div class="form-help">
@@ -282,9 +278,9 @@
                 </div>
             </div>
             
-            <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            <div class="info" style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="flex items-center">
-                    <i class="bi bi-info-circle text-success me-2"></i>
+                    <i class="bi bi-info-circle text-success me-2" style="margin-right: 2%;"></i>
                     <div style="font-size: 0.875rem;">
                         <strong>Что дальше?</strong><br>
                         Ваша заявка появится в маркетплейсе, где инвесторы смогут её профинансировать. 
