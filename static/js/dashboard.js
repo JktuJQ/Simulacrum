@@ -1,20 +1,5 @@
-let walletConnected = false;
 
-function connectWallet() {
-    walletConnected = true;
-    document.getElementById('walletNotConnected').style.display = 'none';
-    document.getElementById('walletConnected').style.display = 'block';
 
-    const walletButton = document.getElementById('walletButton');
-    const walletText = document.getElementById('walletText');
-    if (walletButton && walletText) {
-        walletText.textContent = '0x1234...5678';
-        walletButton.classList.remove('btn-primary');
-        walletButton.classList.add('btn-secondary');
-    }
-
-    console.log('Wallet connected successfully');
-}
 
 function showTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(tab => {
@@ -41,18 +26,21 @@ function confirmRepayment(loanId) {
     console.log(`Loan ${loanId} has been repaid successfully`);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const shouldConnectWallet = localStorage.getItem('walletConnected') === 'true';
-
-    if (shouldConnectWallet) {
-        connectWallet();
+document.addEventListener('DOMContentLoaded', async function() {
+    let walletConnected = await isWalletConnected();
+    if (walletConnected) {
+        document.getElementById('walletNotConnected').style.display = 'none';
+        document.getElementById('walletConnected').style.display = 'block';
+    } else {
+        document.getElementById('walletNotConnected').style.display = 'block';
+        document.getElementById('walletConnected').style.display = 'none';
     }
 
-    const lastTab = localStorage.getItem('lastDashboardTab');
-    if (lastTab && walletConnected) {
-        const tabButton = document.querySelector(`[onclick="showTab('${lastTab}')"]`);
-        if (tabButton) {
-            tabButton.click();
-        }
-    }
+    // const lastTab = localStorage.getItem('lastDashboardTab');
+    // if (lastTab && walletConnected) {
+    //     const tabButton = document.querySelector(`[onclick="showTab('${lastTab}')"]`);
+    //     if (tabButton) {
+    //         tabButton.click();
+    //     }
+    // }
 });
