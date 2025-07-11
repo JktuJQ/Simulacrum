@@ -201,22 +201,6 @@ getLoanDetails(loanId) {
     return await contract.methods.getLoanDetails(loanId).call();
 }
 
-async function
-getActiveLoans() {
-    const loans = [];
-    for (let i = 1; i <= 10; i++) {
-        try {
-            const loan = await getLoanDetails(i);
-            if (loan.status === "0") { // Status.Awaiting
-                loans.push(loan);
-            }
-        } catch (e) {
-            break;
-        }
-    }
-    return loans;
-}
-
 function storeCreatedLoan(loanId) {
     const myLoans = JSON.parse(localStorage.getItem('myLoans')) || [];
     if (!myLoans.includes(loanId)
@@ -231,5 +215,41 @@ function storeFundedLoan(loanId) {
     if (!fundedLoans.includes(loanId)) {
         fundedLoans.push(loanId);
         localStorage.setItem('fundedLoans', JSON.stringify(fundedLoans));
+    }
+}
+
+async function getActiveLoans() {
+    try {
+        const loanCount = await contract.methods.loanCounter().call();
+        const activeLoans = [];
+
+        for (let i = 1; i <= loanCount; i++) {
+            try {
+                const loanData = await contract.methods.getLoanDetails(i).call();
+
+                if (loanData.status === "0") { // Status.Awaiting
+                    activeLoans.push({
+                        id: { 0: i },
+                        created_at: new Date().toISOString(),
+                        borrower: { 0: loanData.borrower },
+                        status: "Awaiting",
+                        amount: { 0: loanData.USDC / 1e6 },
+                        collateral: { 0: loanData.ETH / 1e18 },
+                        rate: { 0: (loanData.Percent / loanData.USDC - 1) * 100 },
+                        term: {
+                            num_seconds: loanData.TimeDelta,
+                            num_days: function() { return Math.round(this.num_seconds / 86400) }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.warn(`Skipping loan ${i}:`, e);
+            }
+        }
+
+        return activeLoans;
+    } catch (error) {
+        console.error('Error fetching loans:', error);
+        throw new Error('Не удалось загрузить данные с блокчейна');
     }
 }

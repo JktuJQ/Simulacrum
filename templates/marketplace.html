@@ -110,7 +110,7 @@
             <div id="filterBadges"></div>
         </div>
     </div>
-    
+
     <div class="grid grid-cols-1 gap-6" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));" id="loansGrid">
         {% for loan in loans %}
         <div class="loan-card" data-amount="2500" data-rate="12.5" data-ltv="45" data-term="60">
@@ -164,6 +164,11 @@
                     Финансировать
                 </button>
             </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-info-circle"></i>
+            <p>Нет доступных займов в данный момент</p>
         </div>
         {% endfor %}
     </div>

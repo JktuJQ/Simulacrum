@@ -149,3 +149,80 @@ function confirmFunding(loanId) {
         }
     }
 }
+
+async function loadMarketplaceLoans() {
+    try {
+        const loans = await getActiveLoans();
+        renderMarketplace(loans);
+    } catch (error) {
+        showErrorMessage(error);
+    }
+}
+
+async function renderMarketplace(loans) {
+    try {
+        const response = await fetch('/marketplace', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(loans)
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка рендеринга: ' + response.status);
+        }
+
+        const html = await response.text();
+        document.documentElement.innerHTML = html;
+    } catch (error) {
+        console.error('Rendering error:', error);
+        document.getElementById('loansGrid').innerHTML = `
+            <div class="error-message">
+                <i class="bi bi-exclamation-triangle"></i>
+                <p>Ошибка отображения данных: ${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+// Initialize marketplace
+document.addEventListener('DOMContentLoaded', async () => {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) loadingIndicator.style.display = 'block';
+
+    if (await isWalletConnected()) {
+        await initContract();
+        await loadMarketplaceLoans();
+    } else {
+        showWalletConnectPrompt();
+    }
+});
+
+async function fundLoan(loanId) {
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const account = accounts[0];
+
+        await contract.methods.fundRequest(loanId).send({
+            from: account
+        });
+
+        alert(`Займ #${loanId} успешно профинансирован!`);
+        await loadMarketplaceLoans(); // Refresh data
+    } catch (error) {
+        console.error('Funding error:', error);
+        alert(`Ошибка финансирования: ${error.message}`);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('.loan-card')) {
+        const loansGrid = document.getElementById('loansGrid');
+        loansGrid.style.display = 'grid';
+        setTimeout(() => {
+            loansGrid.classList.add('visible');
+        }, 100);
+    }
+});

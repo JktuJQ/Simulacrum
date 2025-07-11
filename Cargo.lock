@@ -9,6 +9,7 @@ dependencies = [
  "askama",
  "axum",
  "chrono",
+ "serde",
  "shuttle-axum",
  "shuttle-runtime",
  "shuttle-shared-db",

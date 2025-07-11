@@ -4,10 +4,11 @@
 use crate::blockchain::{WalletAddress, ETH, USDC};
 use chrono::{DateTime, TimeDelta, Utc};
 use std::fmt;
+use serde::{Deserialize, Serialize};
 
 /// [`Percent`] newtype wrapper represents percents of anything.
 ///
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub struct Percent(pub f32);
 impl fmt::Display for Percent {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -17,7 +18,7 @@ impl fmt::Display for Percent {
 
 /// [`LoanId`] newtype wrapper represents id of the loan.
 ///
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct LoanId(pub u64);
 impl fmt::Display for LoanId {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -27,7 +28,7 @@ impl fmt::Display for LoanId {
 
 /// [`LoanOutcome`] enum lists all possible outcomes of a loan.
 ///
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LoanOutcome {
     /// Loan was returned by the borrower.
     ///
@@ -49,6 +50,7 @@ pub enum LoanOutcome {
 }
 /// [`LoanOutcomeResult`] struct represents the result of a loan that was confirmed by the borrower.
 ///
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct LoanOutcomeResult {
     /// Lender id.
     ///
@@ -59,6 +61,7 @@ pub struct LoanOutcomeResult {
 }
 /// [`LoanStatus`] enum lists all possible states of a loan.
 ///
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum LoanStatus {
     /// Awaiting the borrower.
     ///
@@ -103,6 +106,7 @@ impl fmt::Display for LoanStatus {
 }
 /// [`Loan`] struct represents loan request that was created by the borrower.
 ///
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Loan {
     /// Loan id.
     ///

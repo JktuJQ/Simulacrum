@@ -318,3 +318,27 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+.loading-indicator {
+    text-align: center;
+    padding: 3rem;
+    transition: opacity 0.3s ease;
+}
+
+.loans-grid {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.loans-grid.visible {
+    opacity: 1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.loan-card {
+    animation: fadeIn 0.5s ease forwards;
+}

@@ -2,13 +2,14 @@
 //!
 
 use std::fmt;
+use serde::{Serialize, Deserialize};
 
 /// Implements newtype wrapper around currency.
 ///
 macro_rules! impl_currency {
     ($currency:ident) => {
         #[doc = concat!("[`", stringify!($currency), "`] newtype wrapper represents value of something in ", stringify!($currency), ".")]
-        #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+        #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Serialize, Deserialize)]
         pub struct $currency(pub f64);
         impl fmt::Display for $currency {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -22,5 +23,5 @@ impl_currency!(ETH);
 
 /// [`WalletAddress`] struct is a wrapper around any blockchain address.
 ///
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct WalletAddress(pub String);
