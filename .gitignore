@@ -5,6 +5,11 @@
 # Rust
 /target
 
+# Hardhat
+/.deps
+/.states
+/artifacts
+
 # .env
 *.env
 
