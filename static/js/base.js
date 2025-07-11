@@ -114,3 +114,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     //     }
     // }
 });
+
+async function sendToBackend(eventType, data) {
+    try {
+        const response = await fetch('/api/events', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eventType, data })
+        });
+
+        if (!response.ok) {
+            console.error('Backend error:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error sending to backend:', error);
+    }
+}

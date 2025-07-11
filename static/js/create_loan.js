@@ -151,3 +151,54 @@ function submitLoan() {
 submitButton.addEventListener('click', submitLoan);
 
 updateCalculations();
+
+// create_loan.js (add to existing file)
+async function submitLoan() {
+    const loanAmountValue = parseFloat(loanAmount.value);
+    const interestRateValue = parseFloat(interestRate.value);
+    const loanDurationValue = parseInt(loanDuration.value);
+    const collateralAmountValue = parseFloat(collateralAmount.value);
+
+    // Convert to contract units
+    const usdcInSmallestUnit = loanAmountValue * 10**6;
+    const repaymentAmount = loanAmountValue * (1 + interestRateValue/100 * (loanDurationValue/365));
+    const repaymentInSmallestUnit = repaymentAmount * 10**6;
+    const collateralInWei = Web3.utils.toWei(collateralAmountValue.toString(), 'ether');
+    const durationInSeconds = loanDurationValue * 24 * 60 * 60;
+
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const account = accounts[0];
+
+        await contract.methods.createLoanRequest(
+            usdcInSmallestUnit,
+            repaymentInSmallestUnit,
+            durationInSeconds
+        ).send({
+            from: account,
+            value: collateralInWei
+        })
+            .on('transactionHash', (hash) => {
+                console.log('Transaction hash:', hash);
+            })
+            .on('receipt', (receipt) => {
+                const loanId = receipt.events.LoanRequestAwaiting.returnValues.id;
+                storeCreatedLoan(loanId);
+                sendToBackend('loanCreated', {
+                    id: loanId,
+                    amount: loanAmountValue,
+                    rate: interestRateValue,
+                    duration: loanDurationValue,
+                    collateral: collateralAmountValue
+                });
+                openModal('successModal');
+            })
+            .on('error', (error) => {
+                console.error('Error:', error);
+                alert('Error creating loan: ' + error.message);
+            });
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+    }
+}
