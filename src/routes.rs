@@ -31,3 +31,6 @@ pub use create_loan::*;
 
 mod dashboard;
 pub use dashboard::*;
+
+mod get_loans;
+pub use get_loans::*;

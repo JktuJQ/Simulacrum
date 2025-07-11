@@ -113,6 +113,34 @@ document.addEventListener('DOMContentLoaded', async function() {
     //         tabButton.click();
     //     }
     // }
+    if (window.location.href === "http://localhost:8000/marketplace") {
+        let loans;
+    await fetch("http://localhost:8000/get_loans", {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: 
+    JSON.stringify([
+        {
+            "id": 12345,
+            "created_at": "2023-07-11T12:34:56Z",
+            "borrower": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+            "status": "Awaiting",
+            "amount": 1000.0,
+            "collateral": 1.5,
+            "rate": 5.0,
+            "term": [12312, 123123]
+        }
+    ])
+    })
+    .then(async (e) => loans = await e.text())
+    .catch(error => console.error('Error:', error));
+
+
+    let loans_grid = document.querySelector('#loansGrid');
+    loans_grid.innerHTML = loans
+}
 });
 
 async function sendToBackend(eventType, data) {
