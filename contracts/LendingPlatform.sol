@@ -2,12 +2,13 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
 /**
  * @title LendingPlatform
  * @dev Новая версия, где заёмщик инициирует заявку на кредит.
  */
-contract LendingPlatform {
+contract LendingPlatform is KeeperCompatibleInterface {
     // --- Переменные состояния ---
     IERC20 public usdtTokenAddress;
     address private _owner;
@@ -17,6 +18,9 @@ contract LendingPlatform {
 
     // Коэффициент избыточного залога (150% -> 150)
     uint256 public ETHRatio = 150;
+
+    AggregatorV3Interface internal priceFeed;
+
 
     // Счетчик займов для каждого заёмщика
     mapping(address => uint256) private _loanCounter;
@@ -47,6 +51,13 @@ contract LendingPlatform {
         Status status;
     }
 
+    struct LoanKey {
+    address borrower;
+    uint256 loanId;
+}
+
+    LoanKey[] public activeLoans;
+
     mapping(address => mapping(uint256 => Loan)) public loans;
     // --- События ---
     event LoanRequestAwaiting(uint256 indexed id, address indexed borrower, uint256 USDC, uint256 repayment, uint256 ETH);
@@ -56,13 +67,32 @@ contract LendingPlatform {
     event DealCancell(uint256 indexed id, address indexed borrower); 
     event LoanReturned(uint256 indexed id, address indexed borrower); 
     event LoanOverdue(uint256 indexed id, address indexed borrower); 
+    event LoanLiquidated(uint256 indexed id, address indexed borrower);
 
     // --- Конструктор ---
-    constructor(address _usdcTokenAddress) {
+    constructor(address _usdcTokenAddress, address _ethUsdPriceFeed) {
         require(_usdcTokenAddress != address(0), "Invalid USDC token address");
         usdtTokenAddress = IERC20(_usdcTokenAddress);
+        priceFeed = AggregatorV3Interface(_ethUsdPriceFeed);
         _owner = msg.sender;
     }
+
+
+    // Получение цены 
+
+    function getLatestETHPrice() public view returns (uint256) {
+    (
+        , 
+        int price,
+        ,
+        ,
+        
+    ) = priceFeed.latestRoundData();
+    require(price > 0, "Invalid price");
+    // Цена приходит с 8 десятичными знаками => нормализуем до 18
+    return uint256(price) * 10**10;
+}
+
 
     // --- Основные функции ---
     /**
@@ -73,9 +103,12 @@ contract LendingPlatform {
         require(_percent * _USDC > _USDC,"Repayment must be greater than USDC");
         require(msg.value > 0, "ETH must be sent");
 
+
+
         // Проверка достаточности залога
+        uint256 ethPrice = getLatestETHPrice();
         uint256 requiredETHWei = (_USDC * ETHRatio * 10**18) /
-            (ethPriceInUsdt * 100);
+        (ethPrice * 100 / 1e18);
         require(msg.value >= requiredETHWei, "Not enough ETH ETH");
 
 
@@ -121,7 +154,7 @@ contract LendingPlatform {
     }
 
     /**
-     * @dev 3. ОБЕ СТОРОНЫ: Подтверждают сделку.
+     * @dev 3. Подтверждение сделки.
      */
     function confirmDeal(address _borrowerAddress, uint256 _loanId) external {
         Loan storage loan = loans[_borrowerAddress][_loanId];
@@ -136,13 +169,14 @@ contract LendingPlatform {
 
         emit DealConfirmed(_loanId, _borrowerAddress, msg.sender);
 
-        // Если оба подтвердили, активируем заём
+        // Если подтвердили, активируем заём
         if (loan.borrowerConfirmed) {
             loan.status = Status.Active;
             loan.dueDate = block.timestamp + loan.TimeDelta;
 
             // Отправляем USDT заёмщику
             IERC20(usdtTokenAddress).transfer(loan.borrower, loan.USDC);
+            activeLoans.push(LoanKey({borrower: _borrowerAddress, loanId: _loanId}));
 
             emit LoanActivated(_loanId, _borrowerAddress, loan.dueDate);
         }
@@ -193,21 +227,62 @@ contract LendingPlatform {
         emit LoanReturned(_loanId, msg.sender);
     }
 
-    /**
-     * @dev 5. КРЕДИТОР: Ликвидирует заём, если он просрочен.
-     */
-    function liquidateLoan(address _borrowerAddress, uint256 _loanId) external{
-        Loan storage loan = loans[_borrowerAddress][_loanId];
-        require(loan.status == Status.Active, "Loan is not active");
-        require(loan.lender == msg.sender, "Only lender can liquidate");
-        require(block.timestamp > loan.dueDate, "Loan is not overdue yet");
+    function checkUpkeep(bytes calldata) external view override returns (bool upkeepNeeded, bytes memory performData) {
+       for (uint i = 0; i < activeLoans.length; i++) {
+        LoanKey memory key = activeLoans[i];
+        Loan storage loan = loans[key.borrower][key.loanId];
 
-        // Отправляем залог кредитору
+        if (loan.status != Status.Active) continue;
+
+        bool isOverdue = block.timestamp > loan.dueDate;
+
+        // Считаем стоимость залога в USDC
+        uint256 ethPrice = getLatestETHPrice(); // 18 decimals
+        uint256 collateralValue = (loan.ETH * ethPrice) / 1e18;
+
+        uint256 repayment = (loan.USDC * loan.Percent) / 100;
+
+        bool isUndercollateralized = collateralValue <= repayment;
+
+        if (isOverdue || isUndercollateralized) {
+            return (true, abi.encode(i));
+        }
+    }
+
+    return (false, bytes(""));
+}
+
+     /**
+     * @dev 5. Ликвидация заёма, если он просрочен.
+     */
+
+    function performUpkeep(bytes calldata performData) external override {
+    uint index = abi.decode(performData, (uint));
+    LoanKey memory key = activeLoans[index];
+    Loan storage loan = loans[key.borrower][key.loanId];
+
+    if (loan.status != Status.Active) return;
+
+    bool isOverdue = block.timestamp > loan.dueDate;
+
+    uint256 ethPrice = getLatestETHPrice();
+    uint256 collateralValue = (loan.ETH * ethPrice) / 1e18;
+    uint256 repayment = (loan.USDC * loan.Percent) / 100;
+
+    bool isUndercollateralized = collateralValue <= repayment;
+
+    if (isOverdue || isUndercollateralized) {
+        loan.status = Status.Liquidated;
         payable(loan.lender).transfer(loan.ETH);
 
-        loan.status = Status.Overdue;
-        emit LoanOverdue(_loanId, _borrowerAddress);
+        emit LoanLiquidated(loan.id, key.borrower);
+
+        // Удаляем из списка активных
+        activeLoans[index] = activeLoans[activeLoans.length - 1];
+        activeLoans.pop();
     }
+    }
+
 
     // --- Вспомогательные view-функции ---
     function getLoanDetails(address _borrowerAddress, uint256 _loanId) external view returns (Loan memory) {
