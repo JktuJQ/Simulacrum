@@ -2,8 +2,8 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
+import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/automation/interfaces/KeeperCompatibleInterface.sol";
 /**
  * @title LendingPlatform
  * @dev Новая версия, где заёмщик инициирует заявку на кредит.
@@ -107,8 +107,7 @@ contract LendingPlatform is KeeperCompatibleInterface {
 
         // Проверка достаточности залога
         uint256 ethPrice = getLatestETHPrice();
-        uint256 requiredETHWei = (_USDC * ETHRatio * 10**18) /
-        (ethPrice * 100 / 1e18);
+        uint256 requiredETHWei = (_USDC * ETHRatio * 1e18) / (ethPrice * 100);
         require(msg.value >= requiredETHWei, "Not enough ETH ETH");
 
 
