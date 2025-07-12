@@ -6,7 +6,7 @@
 //!
 
 use axum::{routing::{get, post}, Router};
-use tower_http::{services::ServeDir, limit::RequestBodyLimitLayer};
+use tower_http::{services::ServeDir};
 
 mod blockchain;
 mod models;
@@ -19,7 +19,6 @@ pub async fn main() -> shuttle_axum::ShuttleAxum {
     let router = Router::new()
         .route("/", get(routes::index_route))
         .route("/marketplace", get(routes::marketplace_route))
-        .route("/get_loans", post(routes::loans_vec).layer(RequestBodyLimitLayer::new(1024 * 16)))
         .route("/create-loan", get(routes::create_loan_route))
         .route("/dashboard", get(routes::dashboard_route))
         .nest_service("/static", ServeDir::new("static"));

@@ -112,7 +112,10 @@ function validateForm() {
     submitButton.disabled = !isValid;
 }
 
-function submitLoan() {
+async function submitLoan() {
+    console.log('here');
+    await initContract();
+    console.log('here22222');
     const loanAmountValue = parseFloat(loanAmount.value);
     const loanTokenValue = loanToken.value;
     const loanDurationValue = parseInt(loanDuration.value);
@@ -120,10 +123,10 @@ function submitLoan() {
     const collateralAmountValue = parseFloat(collateralAmount.value);
     const collateralTokenValue = collateralToken.value;
 
-    document.getElementById('modalLoanAmount').textContent = `$${loanAmountValue.toLocaleString()} ${loanTokenValue}`;
-    document.getElementById('modalRate').textContent = `${interestRateValue}% годовых`;
-    document.getElementById('modalDuration').textContent = `${loanDurationValue} дней`;
-    document.getElementById('modalCollateral').textContent = `${collateralAmountValue} ${collateralTokenValue}`;
+    // document.getElementById('modalLoanAmount').textContent = `$${loanAmountValue.toLocaleString()} ${loanTokenValue}`;
+    // document.getElementById('modalRate').textContent = `${interestRateValue}% годовых`;
+    // document.getElementById('modalDuration').textContent = `${loanDurationValue} дней`;
+    // document.getElementById('modalCollateral').textContent = `${collateralAmountValue} ${collateralTokenValue}`;
 
     console.log('Creating loan with parameters:', {
         amount: loanAmountValue,
@@ -134,35 +137,20 @@ function submitLoan() {
         collateralToken: collateralTokenValue
     });
 
-    openModal('successModal');
 
-    document.querySelectorAll('.step').forEach((step, index) => {
-        if (index < 2) {
-            step.classList.add('active');
-        }
-    });
-}
+    // const loanAmountValue = 0.0001;
+    // const interestRateValue = 5.0;
+    // const loanDurationValue = 30;
+    // const collateralAmountValue = 0.000001;
 
-[loanAmount, loanToken, loanDuration, interestRate, collateralAmount, collateralToken].forEach(element => {
-    element.addEventListener('input', updateCalculations);
-    element.addEventListener('change', updateCalculations);
-});
+    // Convert to contract units using integer math
+    const usdcInSmallestUnit = Math.floor(loanAmountValue * 10**6);
 
-submitButton.addEventListener('click', submitLoan);
+    // Calculate repayment using integer math to avoid floating points
+    // repayment = amount + (amount * interest * duration / 36500)
+    const repaymentInSmallestUnit = usdcInSmallestUnit +
+        Math.floor((usdcInSmallestUnit * interestRateValue * loanDurationValue) / 36500);
 
-updateCalculations();
-
-// create_loan.js (add to existing file)
-async function submitLoan() {
-    const loanAmountValue = parseFloat(loanAmount.value);
-    const interestRateValue = parseFloat(interestRate.value);
-    const loanDurationValue = parseInt(loanDuration.value);
-    const collateralAmountValue = parseFloat(collateralAmount.value);
-
-    // Convert to contract units
-    const usdcInSmallestUnit = loanAmountValue * 10**6;
-    const repaymentAmount = loanAmountValue * (1 + interestRateValue/100 * (loanDurationValue/365));
-    const repaymentInSmallestUnit = repaymentAmount * 10**6;
     const collateralInWei = Web3.utils.toWei(collateralAmountValue.toString(), 'ether');
     const durationInSeconds = loanDurationValue * 24 * 60 * 60;
 
@@ -195,10 +183,19 @@ async function submitLoan() {
             })
             .on('error', (error) => {
                 console.error('Error:', error);
-                alert('Error creating loan: ' + error.message);
+                // alert('Error creating loan: ' + error.message);
             });
     } catch (error) {
         console.error('Error:', error);
-        alert('Error: ' + error.message);
+        // alert('Error: ' + error.message);
     }
 }
+
+[loanAmount, loanToken, loanDuration, interestRate, collateralAmount, collateralToken].forEach(element => {
+    element.addEventListener('input', updateCalculations);
+    element.addEventListener('change', updateCalculations);
+});
+
+submitButton.addEventListener('click', submitLoan);
+
+updateCalculations();

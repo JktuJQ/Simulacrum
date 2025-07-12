@@ -1,6 +1,6 @@
 // contract.js
 let contract;
-let contractAddress = '0x0C0ed55744Eb8898377e494C49508C8df908F2D5';
+let contractAddress = '0xcb4a6114285A0F68D008Af257c84B471025eDA65';
 let contractABI = [{
     "inputs": [{"internalType": "address", "name": "_usdcTokenAddress", "type": "address"}],
     "stateMutability": "nonpayable",
