@@ -1,19 +1,44 @@
 # Simulacrum
 
-`Simulacrum` — это децентрализованная платформа взаимного кредитования,
-которая упростит процесс выдачи и получения займов между пользователями без посредников.
+`Simulacrum` is a decentralized peer-to-peer lending platform
+that simplifies the process of lending and receiving loans between users without intermediaries.
 
-## Запуск проекта
+## Website interface
 
-Чтобы запустить наш проект на вашей локальной машине, вам потребуется:
-1. Установить VPN на всю систему, а не только на браузер (или релоцироваться)
-2. [Установить Rust](https://www.rust-lang.org/tools/install) (требует VPN)
-3. [Установить `shuttle-rs`](https://www.shuttle.dev/) (`cargo install cargo-shuttle`) (требует VPN)
-4. Запустить проект с помощью `shuttle run`
-(автоматическая компиляция проекта, настройка конфигурационных файлов, развертка вебсайта на localhost).
+Main page:
 
-Поскольку даже первый шаг достаточно сложен,
-мы самостоятельно развернули сайт с помощью того же `shuttle-rs` по [этому адресу](https://simulacrum-yfsv.shuttle.app/)
-и задеплоили тестовую сеть блокчейна по [следующему адресу](https://eth-sepolia.g.alchemy.com/v2/cBJ8c2fUWjHjCN1qKif8B).
-([адрес контракта](https://sepolia.etherscan.io/address/0xcb4a6114285A0F68D008Af257c84B471025eDA65#code))
-Таким образом вы сможете протестировать наше приложение, не прибегая ни к каким системам сборки и развертывания.
+![Main page](docs/main_page.png)
+
+Marketplace page:
+
+![Marketplace page](docs/marketplace_page.png)
+
+![Marketplace approve](docs/marketplace_approve.png)
+
+"Create loan" page:
+
+![Create loan](docs/create_loan_page.png)
+
+![Create loan approve](docs/create_loan_approve.png)
+
+Dashboard page:
+
+![Dashboard](docs/dashboard_page.png)
+
+## Running the project
+
+To run our project on your local machine, you will need to:
+1. [Install Rust](https://www.rust-lang.org/tools/install)
+2. [Install `shuttle-rs`](https://www.shuttle.dev/) (`cargo install cargo-shuttle`)
+3. Run the project with `shuttle run`
+   (automatic compilation of the project, setting up configuration files, deploying the website to localhost).
+4. Deploy our contract to the testnet of your choice and configure that in our frontend.
+
+## Note
+This project was developed as part of a hackathon in a short time frame and,
+as a result, the written code is subject to technical debt and clogging.
+
+Connection with the actual testnet may not be working on the frontend, but is theoretically available
+for any blockchain network to which our contract is deployed.
+
+However, the presented project is viable even in this state, and therefore may be an object of interest.
